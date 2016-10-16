@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Login</title>
+</head>
+<body>
+    <form method="POST" action="?next={{ next }}">
+        {% module xsrf_form_html() %}
+        <input type="text" name="username" placeholder="用户名">
+        <input type="password" name="password" placeholder="密码">
+        <input type="text" name="captcha" placeholder="验证码">
+        <input type="hidden" name="remember" value="0">
+        <label>
+            <input type="checkbox" name="remember" value="1">remember me
+        </label>
+        <input type="submit" name="commit" value="登陆" >
+    <form>
+</body>
+</html>

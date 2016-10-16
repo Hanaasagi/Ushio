@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script src="{{ static_url("HyperDown/Parser.js") }}"></script>
+</head>
+<body>
+    <form method="POST" action="" onsubmit="update()">
+        {% module xsrf_form_html() %}
+        <input type="text" name="title" placeholder="标题">
+        <input type="hidden" name="content" id="content" value="hello">
+        <input type="submit" name="submit" value="发布">
+    </form>
+    <textarea id="editor" placeholder="内容" onkeyup="render()">
+    </textarea>
+    <div id="view"></div>
+    <script>
+        var parser = new HyperDown;
+        function render() {
+            var txt = document.getElementById("editor").value;
+            document.getElementById("view").innerHTML=parser.makeHtml(txt);
+        }
+        function update() {
+            var txt = document.getElementById("editor").value;
+            document.getElementById("content").value = txt;
+        }
+    </script>
+</body>
+</html>

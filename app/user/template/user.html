@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <div>
+        {{ request.uri }}
+        <a href="/topics/new">发布帖子</a>
+    </div>
+    {% for k, v in userinfo.items() %}
+    <div>
+        {{ label_map.get(k, k) }}
+        <input type="text" name="{{k}}" value="{{v}}">
+    </div>
+    {% end %}
+</body>
+</html>

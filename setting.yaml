@@ -1,0 +1,18 @@
+"base_url": "127.0.0.1"
+"cookie_secret": !!python/unicode "secret-key"
+"salt": !!python/unicode "7BB98050796B649E"
+"imagepath": "./static/upimg"
+"init_money": !!int "10"
+"charge": 1
+"invite_expire": !!int "604800"
+"reg_type": !!python/unicode "open"
+"intranet": !!bool "false"
+"site":
+  "description": !!python/unicode "Ushio a simple community"
+  "keyword": !!python/unicode "love and peace"
+  "webname": !!python/unicode "Ushio"
+"email":
+  "method": "none"
+  "url": "https://api.mailgun.net/v3/domain"
+  "key": "key-xxxxx"
+  "sender": "root@domain"
