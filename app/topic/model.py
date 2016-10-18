@@ -16,5 +16,11 @@ class TopicModel(Model):
             'label': '内容',
             'required': True,
             'type': unicode
+        },
+        'price': {
+            'label': '价格',
+            'type': int,
+            'min': 0,
+            'max': 10
         }
     }

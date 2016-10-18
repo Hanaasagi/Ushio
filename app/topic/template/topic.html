@@ -7,8 +7,12 @@
 <body>
     <div>
         <a href="/topics/new">发布新帖子</a>
+        {% if not current_user %}
         <a href="/login">登陆</a>
         <a href="/register">注册</a>
+        {% else %}
+        <a href="/user/{{current_user['username']}}">个人主页</a>
+        {% end %}
     </div>
     <div>
         {% for topic in topics %}

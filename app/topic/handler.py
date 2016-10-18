@@ -44,7 +44,10 @@ class TopicNewHandler(BaseHandler):
 
     @tornado.web.authenticated
     def get(self):
-        self.render('topic/template/topic-new.html')
+        topic = dict()
+        if self.cache['topic']:
+            topic = self.cache['topic']
+        self.render('topic/template/topic-new.html', topic=topic)
 
     @tornado.web.asynchronous
     @tornado.gen.coroutine
@@ -62,8 +65,8 @@ class TopicNewHandler(BaseHandler):
             'author_id': self.current_user['_id'],
             'author': self.current_user['username'],
             'view': 0,
-            'like': [],
-            'unlike': [],
+            'like': 0,
+            'price': 0,  # 价格
             'time': time.time(),
             'star': False,  # 精华
             'comment': [],
@@ -73,7 +76,7 @@ class TopicNewHandler(BaseHandler):
 
         model = TopicModel()
         if not model(topic):
-            self.cache['topic'] = [title, content]
+            self.cache['topic'] = topic
             self.custom_error()
         tid = yield self.db.topic.insert(topic)
         self.redirect('/topics/{}'.format(tid))
@@ -115,4 +118,52 @@ class TopicHandler(BaseHandler):
             assert topic is not None
         except:
             self.custom_error()
-        self.render('topic/template/topic-detail.html', topic=topic)
+        ismine = False
+        if topic['author_id'] == self.current_user['_id']:
+            ismine = True
+        self.render('topic/template/topic-detail.html',
+                    topic=topic, ismine=ismine)
+
+
+class TopicUpdateHandler(BaseHandler):
+
+    def initialize(self):
+        super(TopicUpdateHandler, self).initialize()
+
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def get(self, tid):
+        try:
+            tid = ObjectId(tid)
+            topic = yield self.db.topic.find_one({
+                '_id': tid
+            })
+            assert topic is not None
+            assert topic['author_id'] == self.current_user['_id']
+        except:
+            self.custom_error('您无权进行修改')
+        self.render('topic/template/topic-new.html', topic=topic)
+
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def post(self, tid):
+        topic = {
+            'title': self.get_body_argument('title', ''),
+            'content': self.get_body_argument('content', ''),
+            'price': self.get_body_argument('price', 0)
+        }
+        model = TopicModel()
+        if model(topic):
+            try:
+                tid = ObjectId(tid)
+            except:
+                self.cache['topic'] = topic
+                self.custom_error('正在更新一个不存在的帖子')
+            yield self.db.topic.update({
+                '_id': tid
+            }, {
+                '$set': topic
+            })
+            self.redirect('/topics/{}'.format(tid))
+        else:
+            self.custom_error()

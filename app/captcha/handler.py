@@ -11,5 +11,7 @@ class CaptchaHanlder(BaseHandler):
     def prepare(self):
         super(CaptchaHanlder, self).prepare()
 
-    def get(self, *args, **kwargs):
-        pass
+    def get(self):
+        self.set_header("Content-Type", "image/png")
+        img = Captcha.get(self)
+        self.write(img.getvalue())

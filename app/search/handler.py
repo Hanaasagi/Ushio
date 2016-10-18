@@ -1,6 +1,5 @@
 # -*-coding:UTF-8-*-
 import re
-import pymongo
 import tornado.web
 import tornado.gen
 from ushio._base import BaseHandler
@@ -21,12 +20,14 @@ class SearchHandler(BaseHandler):
         limit = 20
         page = int(self.get_query_argument('page', default=1))
         page = 1 if page <= 0 else page
+
+        # 暂且仅对title进行搜索
+        # 未来或许使用 elstiasearch 全文搜索
         cursor = self.db.topic.find({
             'title': {'$regex': keyword, '$options': 'i'}
         })
         count = yield cursor.count()
-        cursor.sort([('time', pymongo.DESCENDING)]).limit(
+        cursor.sort([('time', -1)]).limit(
             limit).skip((page - 1) * limit)
-        posts = yield cursor.to_list(length=limit)
-        self.render('search.html', posts=posts, page=page, keyword=keyword,
-                    count=count, each=limit)
+        topics = yield cursor.to_list(length=limit)
+        self.render('search.html', topics=posts, page=page, keyword=keyword)

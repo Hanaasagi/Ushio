@@ -87,7 +87,7 @@ class RegisterHandler(BaseHandler):
             'money': self.settings['init_money'],
             'register_time': time.time(),
             'favorite': [],
-            'email': '',
+            'email': email,
             'qq': '',
             'website': '',
             'address': '',
@@ -177,7 +177,7 @@ class LogoutHandler(BaseHandler):
     def get(self):
         if self.get_cookie('TORNADOSESSION'):
             self.clear_cookie('TORNADOSESSION')
-        self.session.delete('current_user')
+        self.session.delete('user_session')
         self.redirect('/login')
 
 

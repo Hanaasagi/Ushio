@@ -3,6 +3,7 @@ import tornado.web
 import tornado.gen
 from hashlib import md5
 from bson import ObjectId
+from util.captcha import Captcha
 from app.user.model import UserModel
 from ushio._base import BaseHandler
 
@@ -23,10 +24,13 @@ class ProfileHandler(BaseHandler):
             'loginip': 0,
             'logintime': 0
         })
-        model = UserModel()
+        if not user:
+            self.custom_error('不存在这个用户')
+        if not user['allowemail']:
+            del user['allowemail']
         if user:
             self.render('user/template/user.html', userinfo=user,
-                        label_map=model.get_label())
+                        label_map=UserModel().get_label())
         else:
             self.set_status(status_code=404)
 
@@ -230,3 +234,33 @@ class UserHandler(BaseHandler):
     @tornado.gen.coroutine
     def post_publish(self, *args):
         pass
+
+
+class DeleteHandler(BaseHandler):
+
+    def initialize(self):
+        super(DeleteHandler, self).initialize()
+
+    def get(self):
+        #
+        # 显示验证码
+        #
+        pass
+
+    def post(self):
+        #
+        # 对验证码进行验证
+        # 删除数据库用户
+        # 删除用户session
+        #
+        captcha = self.get_body_argument('captcha', '')
+        if not Captcha.verify(captcha, self):
+            self.redirect('?captcha_wrong')
+        if self.get_cookie('TORNADOSESSION'):
+            self.clear_cookie('TORNADOSESSION')
+        print self.current_user
+        self.db.user.remove({
+            '_id': ObjectId(self.current_user['_id'])
+        })
+        self.session.delete('user_session')
+        self.redirect('/')

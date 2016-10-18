@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
+    <title>个人信息</title>
 </head>
 <body>
     {% for k, v in userinfo.items() %}
     <div>
-        <label>{{ label_map.get(k, k) }}</label>
-        <label>{{ v }}</label>
+        {{ label_map.get(k, k) }}
+        <input type="text" name="{{k}}" value="{{v}}">
     </div>
     {% end %}
 </body>

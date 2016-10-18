@@ -2,8 +2,24 @@
 <html>
 <head>
     <title>{{ topic['title'] }}</title>
+    <script src="{{ static_url("HyperDown/Parser.js") }}"></script>
 </head>
 <body>
-    
+    <div>
+    {% if ismine %}
+        <a href="/topics/update/{{ topic['_id'] }}">修改</a>
+    {% end %}
+    </div id = "title">
+    <div>
+        {{ topic['title'] }}
+    </div>
+    <div id = "content">
+        {{ topic['content'] }}
+    </div>
+    <script type="text/javascript">
+        var parser = new HyperDown;
+        node = document.getElementById("content");
+        node.innerHTML = parser.makeHtml(node.innerHTML);
+    </script>
 </body>
 </html>

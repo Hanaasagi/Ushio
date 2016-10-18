@@ -7,11 +7,12 @@
 <body>
     <form method="POST" action="" onsubmit="update()">
         {% module xsrf_form_html() %}
-        <input type="text" name="title" placeholder="标题">
+        <input type="text" name="title" placeholder="标题" value="{{ topic.get('title','') }}">
         <input type="hidden" name="content" id="content" value="hello">
         <input type="submit" name="submit" value="发布">
     </form>
     <textarea id="editor" placeholder="内容" onkeyup="render()">
+    {{ topic.get('content','') }}
     </textarea>
     <div id="view"></div>
     <script>
@@ -24,6 +25,7 @@
             var txt = document.getElementById("editor").value;
             document.getElementById("content").value = txt;
         }
+        render();
     </script>
 </body>
 </html>
