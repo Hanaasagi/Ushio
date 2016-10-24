@@ -178,7 +178,7 @@ class LogoutHandler(BaseHandler):
         if self.get_cookie('TORNADOSESSION'):
             self.clear_cookie('TORNADOSESSION')
         self.session.delete('user_session')
-        self.redirect('/login')
+        self.redirect('/')
 
 
 class ResetPasswordHandler(BaseHandler):

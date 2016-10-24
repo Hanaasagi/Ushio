@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Ushio{% end %}</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="alternate icon" type="image/png" href="/i/favicon.png">
+    <link rel="stylesheet" href="{{ static_url("assets/css/amazeui.min.css") }}"/>
+    {% block css %}{% end %}
+</head>
+<body>
+{%block header%}
+ <!-- top bar -->
+<header class="am-topbar am-topbar-fixed-top">
+<div class="am-container" style="max-width: 1200px;">
+    <h1 class="am-topbar-brand">
+        <a href="#"> Ushio </a>
+    </h1>
+    <button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-success am-show-sm-only" data-am-collapse="{target: '#doc-topbar-collapse'}">
+        <span class="am-sr-only">导航切换</span>
+        <span class="am-icon-bars"></span>
+    </button>
+    <div class="am-collapse am-topbar-collapse" id="doc-topbar-collapse">
+        <ul class="am-nav am-nav-pills am-topbar-nav">
+            <li class="am-active"><a href="#">首页</a></li>
+            <li class="am-dropdown" data-am-dropdown>
+                <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;"> 版块 
+                    <span class="am-icon-caret-down"></span>
+                </a>
+                <ul class="am-dropdown-content">
+                    <li><a href="#">轻小说</a></li>
+                    <li><a href="#">番剧</a></li>
+                    <li><a href="#">音乐</a></li>
+                    <li><a href="#">漫画</a></li>
+                    <li class="am-divider"></li>
+                    <li><a href="#">吐槽</a></li>
+                </ul>
+            </li>
+        </ul>
+        <div class="am-topbar-right">
+            <a href="/register" class="am-btn am-topbar-btn am-btn-sm">注册</a>
+        </div>
+        <div class="am-topbar-right">
+            <a href="/login" class="am-btn am-topbar-btn am-btn-sm">登录</a>
+        </div>
+        <form method="GET" action="/search" class="am-topbar-form am-topbar-left am-form-inline am-topbar-right" role="search">
+            <div class="am-form-group">
+                <input type="text" name="keyword" class="am-form-field am-input-sm" placeholder="搜索本站内容">
+            </div>
+        </form>
+    </div>
+</div>
+</header>
+<!-- end top bar -->
+<br>
+{%end%}
+{% block body %}{% end %}
+<footer data-am-widget="footer" class="am-footer am-footer-default" data-am-footer="{  }">
+    <div class="am-footer-miscs">
+        <p>© 2016 Ushio Licensed under MIT license.</p>
+        <!-- <p>显示备案号</p> -->
+    </div>
+</footer>
+{% block js%}{% end %}
+<script type="text/javascript" src="{{ static_url("assets/js/jquery.min.js") }}"></script>
+<script type="text/javascript" src="{{ static_url("assets/js/amazeui.min.js") }}"></script>
+</body>
+</html>

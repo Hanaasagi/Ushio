@@ -11,9 +11,7 @@
         <input type="hidden" name="content" id="content" value="hello">
         <input type="submit" name="submit" value="发布">
     </form>
-    <textarea id="editor" placeholder="内容" onkeyup="render()">
-    {{ topic.get('content','') }}
-    </textarea>
+    <textarea id="editor" placeholder="内容" onkeyup="render()">{{ topic.get('content','') }}</textarea>
     <div id="view"></div>
     <script>
         var parser = new HyperDown;

@@ -1,0 +1,197 @@
+.amp-pager {
+  display: none;
+}
+.doc-example {
+  border: 1px solid #eee;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+  padding: 0 15px 15px;
+}
+.doc-example:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+.doc-example:before {
+  content: 'Demo';
+  display: block;
+  color: #bbb;
+  text-transform: uppercase;
+  margin: 0 -15px 15px -15px;
+  padding: 4px 10px;
+  font-size: 12px;
+}
+.doc-example + .doc-code {
+  margin-top: -1px;
+}
+.doc-example + .doc-code pre {
+  margin-top: 0;
+  border-color: #eee;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+}
+.doc-example > p:last-child {
+  margin-bottom: 0;
+}
+.doc-code {
+  position: relative;
+}
+.doc-code:after {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  color: #ccc;
+  display: inline-block;
+  font-family: "FontAwesome", sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  vertical-align: baseline;
+  line-height: 1;
+  font-size: inherit;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transform: translate(0, 0);
+  content: "\f121";
+}
+.doc-code .am-pre-scrollable::-webkit-scrollbar {
+  width: 5px;
+}
+.doc-code .am-pre-scrollable::-webkit-scrollbar-track-piece {
+  background: transparent;
+}
+.doc-code .am-pre-scrollable::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.15);
+  border-radius: 5px;
+}
+.doc-code .am-pre-scrollable::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+/* css3 counter */
+.doc-main {
+  overflow: hidden;
+  word-wrap: break-word;
+  counter-reset: header2;
+}
+.doc-main > h2 {
+  counter-increment: header2;
+  counter-reset: header3;
+}
+.doc-main > h2:before {
+  content: counter(header2) ". ";
+}
+.doc-main > h3 {
+  counter-increment: header3;
+  counter-reset: header4;
+}
+.doc-main > h3:before {
+  content: counter(header2) "." counter(header3) " ";
+}
+.doc-main > h4 {
+  counter-increment: header4;
+}
+.doc-main > h4:before {
+  content: counter(header2) "." counter(header3) "." counter(header4) " ";
+}
+.doc-main > h2:before,
+.doc-main > h3:before,
+.doc-main > h4:before {
+  color: #888;
+  font-weight: 400;
+}
+/*
+Orginal Style from ethanschoonover.com/solarized (c) Jeremy Hull <sourdrums@gmail.com>
+
+*/
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  background: #fdf6e3;
+  color: #657b83;
+  -webkit-text-size-adjust: none;
+}
+.hljs-comment,
+.diff .hljs-header,
+.hljs-doctype,
+.hljs-pi,
+.lisp .hljs-string,
+.hljs-javadoc {
+  color: #93a1a1;
+}
+/* Solarized Green */
+.hljs-keyword,
+.hljs-winutils,
+.method,
+.hljs-addition,
+.css .hljs-tag,
+.hljs-request,
+.hljs-status,
+.nginx .hljs-title {
+  color: #859900;
+}
+/* Solarized Cyan */
+.hljs-number,
+.hljs-command,
+.hljs-string,
+.hljs-tag .hljs-value,
+.hljs-rules .hljs-value,
+.hljs-phpdoc,
+.hljs-dartdoc,
+.tex .hljs-formula,
+.hljs-regexp,
+.hljs-hexcolor,
+.hljs-link_url {
+  color: #2aa198;
+}
+/* Solarized Blue */
+.hljs-title,
+.hljs-localvars,
+.hljs-chunk,
+.hljs-decorator,
+.hljs-built_in,
+.hljs-identifier,
+.vhdl .hljs-literal,
+.hljs-id,
+.css .hljs-function {
+  color: #268bd2;
+}
+/* Solarized Yellow */
+.hljs-attribute,
+.hljs-variable,
+.lisp .hljs-body,
+.smalltalk .hljs-number,
+.hljs-constant,
+.hljs-class .hljs-title,
+.hljs-parent,
+.hljs-type,
+.hljs-link_reference {
+  color: #b58900;
+}
+/* Solarized Orange */
+.hljs-preprocessor,
+.hljs-preprocessor .hljs-keyword,
+.hljs-pragma,
+.hljs-shebang,
+.hljs-symbol,
+.hljs-symbol .hljs-string,
+.diff .hljs-change,
+.hljs-special,
+.hljs-attr_selector,
+.hljs-subst,
+.hljs-cdata,
+.css .hljs-pseudo,
+.hljs-header {
+  color: #cb4b16;
+}
+/* Solarized Red */
+.hljs-deletion,
+.hljs-important {
+  color: #dc322f;
+}
+/* Solarized Violet */
+.hljs-link_label {
+  color: #6c71c4;
+}
+.tex .hljs-formula {
+  background: #eee8d5;
+}

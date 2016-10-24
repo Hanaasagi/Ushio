@@ -1,24 +1,77 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Ushio</title>
-</head>
-<body>
-    <div>
-        <a href="/topics/new">发布新帖子</a>
-        {% if not current_user %}
-        <a href="/login">登陆</a>
-        <a href="/register">注册</a>
-        {% else %}
-        <a href="/user/{{current_user['username']}}">个人主页</a>
-        {% end %}
+{% comment 路径是否有更好的方式 %}
+{% extends "../../base/template/base.html" %}
+
+{% block title%}首页{% end %}
+{% block css%}
+<style type="text/css">
+    .item-title {
+        font-size: 16px;
+        hyphens: auto;
+        line-height: 130%;
+        text-shadow: 0 1px 0 #fff;
+        word-wrap: break-word;
+        font-weight: 900;
+    }
+</style>
+{%end %}
+
+{% block body%}
+<!-- content -->
+<div class="am-container" style="max-width: 1200px;">
+    <div class="am-u-md-9 doc-content">
+            <div class="am-panel am-panel-default">
+                <div class="am-panel-bd am-text-center">
+                    <small>鲁鲁修，你知道雪为什么是白色的吗？因为它忘记了自己曾经的颜色。 --c.c</small>
+                </div>
+                <table class="am-table am-text-sm am-table-hover am-scrollable-horizontal">
+                    <tr class="row">
+                        <td width="6%" class="am-hide-sm-down">
+                            <img class="am-img-thumbnail am-circle" src="{{ static_url("img/avstar/avstar3.png")}}" width="40" height="40"/>
+                            <!-- <span class="am-badge am-badge-success">免费</span> -->
+                        </td>
+                        <td>
+                            <span class="item-title">
+                                <a href="/public/post/554a2c9a9713962803279371" >
+                                    文章标题balabala
+                                </a>
+                            </span>
+                            <br>
+                            <span>
+                                <a class="am-badge am-round" href="/go/apple">Apple</a> &nbsp;•&nbsp;
+                                <strong><a href="/member/jaylong">jaylong</a></strong><div class="am-hide-sm-down"> &nbsp;•&nbsp; 最后由 <strong><a href="/member/lxfxf">lxfxf</a></strong> 回复于 12 分钟前</div>
+                            </span>
+                        </td>
+                        <td  style="vertical-align:middle;">
+                           <span class="am-badge am-round">12</span>
+                        </td>
+                    </tr>
+                </table>
+                <div class="am-panel-footer">
+                    <ul class="am-pagination am-fr admin-content-pagination"></ul>
+                    <div class="am-cf"></div>
+                </div>
+        </div>
     </div>
-    <div>
-        {% for topic in topics %}
-            <a href="/topics/{{ topic['_id']}}">{{ topic['title'] }}</a>
-            {{ topic['author'] }}<br>
-        {% end %}
+    <div class="am-u-md-3">
+        <span class="am-badge">1</span>
+        <span class="am-badge am-badge-primary">2</span>
+        <span class="am-badge am-badge-secondary">3</span>
+        <span class="am-badge am-badge-success">4</span>
+        <span class="am-badge am-badge-warning">5</span>
+        <span class="am-badge am-badge-danger">6</span>
+        <span class="am-badge am-badge-success">Allmobilize</span>
+        <br>
+        <a class="am-badge am-badge-primary">Free</a>
+        <a class="am-badge am-badge-secondary">Secondary</a>
+        <a class="am-badge am-badge-success">Success</a>
+        <a class="am-badge am-badge-warning">Warning</a>
+        <a class="am-badge am-badge-danger">Danger</a>
+        <!-- 热门主题 -->
+        <a href="##" class="am-btn am-btn-default am-btn-xs am-round">弹丸论破</a>
+        <a href="##" class="am-btn am-btn-default am-btn-xs am-round">男子高中生的日常</a>
+        <a href="##" class="am-btn am-btn-default am-btn-xs am-round">我的妹妹不可能那么可爱</a>
+        <a href="##" class="am-btn am-btn-default am-btn-xs am-round">舰娘collection</a>
+        <!-- end 热门主题 -->
     </div>
-</body>
-</html>
+</div>
+{% end %}
