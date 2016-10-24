@@ -124,7 +124,7 @@ class LoginHandler(BaseHandler):
     def prepare(self):
         super(LoginHandler, self).initialize()
         self.error_map = {
-            'login_error': '用户名或密码错误',
+            'verify_wrong': '用户名或密码错误',
             'captcha_wrong': '验证码错误'
         }
 
@@ -134,6 +134,7 @@ class LoginHandler(BaseHandler):
         error = self.get_argument('error', '')
         error_msg = self.error_map.get(error, '')
         next_to = self.get_query_argument('next', '')
+        print error_msg
         self.render('auth/template/login.html', error=error_msg, next=next_to)
 
     @tornado.web.asynchronous

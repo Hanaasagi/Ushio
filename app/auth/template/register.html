@@ -1,65 +1,54 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title>Register Page</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="renderer" content="webkit">
-    <meta http-equiv="Cache-Control" content="no-siteapp" />
-    <link rel="alternate icon" type="image/png" href="/i/favicon.png">
-    <link rel="stylesheet" href="{{ static_url("assets/css/amazeui.min.css") }}"/>
-    <style>
-        .header {
-            text-align: center;
-        }
-        .header h1 {
-            font-size: 200%;
-            color: #333;
-            margin-top: 30px;
-        }
-        .header p {
-            font-size: 14px;
-        }
+{% extends "../../base/template/base.html" %}
+{% block title %}注册{% end %}
+{% block css%}
+<style>
+.header {
+    text-align: center;
+}
+.header h1 {
+    font-size: 200%;
+    color: #333;
+    margin-top: 30px;
+}
+.header p {
+    font-size: 14px;
+}
 /*    body {
-        background-image:url("{{static_url("assets/img/register.jpg")}}");
-        background-size: cover;
-        background-repeat:no-repeat;
-        background-attachment:fixed;
-    }*/
-    </style>
-</head>
-<body>
-    <div class="header">
-        <div class="am-g">
-            <h1>Ushio</h1>
-            <p>动漫 音乐 轻小说</p>
-        </div>
+background-image:url("{{static_url("assets/img/register.jpg")}}");
+background-size: cover;
+background-repeat:no-repeat;
+background-attachment:fixed;
+}*/
+</style>
+{% end %}
+{% block header%}{% end %}
+{% block body%}
+<div class="header">
+    <div class="am-g">
+        <h1>Ushio</h1>
+        <p>动漫 音乐 轻小说</p>
     </div>
-    <div class="am-g am-g-fixed">
-        <div class="am-u-lg-4 am-u-md-6 am-u-sm-centered">
-            <h3>新用户注册</h3>
-            <hr>
-            <form method="POST" action="" class="am-form">
-                {% module xsrf_form_html() %}
-                <input type="email" name="email" id="email" value="" placeholder="邮箱">
-                <br>
-                <input type="text" name="username" id="username" placeholder="用户名">
-                <br>
-                <input type="password" name="password" id="password" placeholder="密码">
-                <br>
-                <input type="password" name="repassword" id="repassword" placeholder="重复输入以确认">
-                <br>
-                <input type="text" name="captcha" placeholder="验证码">
-                <br>
-                <div class="am-cf">
-                    <input type="submit" name="submit" value="注 册" class="am-btn am-btn-primary am-btn-sm am-fl am-btn-block">
-                </div>
-            </form>
-            <hr>
-            <p>© 2016 Ushio Licensed under MIT license.</p>
-        </div>
+</div>
+<div class="am-g am-g-fixed">
+    <div class="am-u-lg-4 am-u-md-6 am-u-sm-centered">
+        <h3>新用户注册</h3>
+        <hr>
+        <form method="POST" action="" class="am-form">
+            {% module xsrf_form_html() %}
+            <input type="email" name="email" id="email" value="" placeholder="邮箱">
+            <br>
+            <input type="text" name="username" id="username" placeholder="用户名">
+            <br>
+            <input type="password" name="password" id="password" placeholder="密码">
+            <br>
+            <input type="password" name="repassword" id="repassword" placeholder="重复输入以确认">
+            <br>
+            <input type="text" name="captcha" placeholder="验证码">
+            <br>
+            <div class="am-cf">
+                <input type="submit" name="submit" value="注 册" class="am-btn am-btn-primary am-btn-sm am-fl am-btn-block">
+            </div>
+        </form>
     </div>
-</body>
-</html>
+</div>
+{% end %}

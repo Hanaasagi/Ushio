@@ -41,12 +41,27 @@
                 </ul>
             </li>
         </ul>
+        {% if not current_user %}
         <div class="am-topbar-right">
             <a href="/register" class="am-btn am-topbar-btn am-btn-sm">注册</a>
         </div>
         <div class="am-topbar-right">
             <a href="/login" class="am-btn am-topbar-btn am-btn-sm">登录</a>
         </div>
+        {% else %}
+        <div class="am-topbar-right">
+            <div class="am-dropdown" data-am-dropdown="{boundary: '.am-topbar'}">
+                <button class="am-btn am-topbar-btn am-btn-sm am-dropdown-toggle" data-am-dropdown-toggle>{{ current_user['username'] }} <span class="am-icon-caret-down"></span></button>
+                <ul class="am-dropdown-content">
+                    <li><a href="/topics/new">发帖子</a></li>
+                    <li><a href="#">我喜欢的</a></li>
+                    <li><a href="#">提醒</a></li>
+                    <li><a href="#">设置</a></li>
+                    <li><a href="/logout">登出</a></li>
+                </ul>
+            </div>
+        </div>
+        {% end %}
         <form method="GET" action="/search" class="am-topbar-form am-topbar-left am-form-inline am-topbar-right" role="search">
             <div class="am-form-group">
                 <input type="text" name="keyword" class="am-form-field am-input-sm" placeholder="搜索本站内容">
