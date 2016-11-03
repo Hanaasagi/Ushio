@@ -1,29 +1,74 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title></title>
-    <script src="{{ static_url("HyperDown/Parser.js") }}"></script>
-</head>
-<body>
-    <form method="POST" action="" onsubmit="update()">
-        {% module xsrf_form_html() %}
-        <input type="text" name="title" placeholder="标题" value="{{ topic.get('title','') }}">
-        <input type="hidden" name="content" id="content" value="hello">
-        <input type="submit" name="submit" value="发布">
-    </form>
-    <textarea id="editor" placeholder="内容" onkeyup="render()">{{ topic.get('content','') }}</textarea>
-    <div id="view"></div>
-    <script>
-        var parser = new HyperDown;
-        function render() {
-            var txt = document.getElementById("editor").value;
-            document.getElementById("view").innerHTML=parser.makeHtml(txt);
-        }
-        function update() {
-            var txt = document.getElementById("editor").value;
-            document.getElementById("content").value = txt;
-        }
-        render();
-    </script>
-</body>
-</html>
+<!-- 
+<form method="POST" action="" onsubmit="update()">
+    {% module xsrf_form_html() %}
+    <input type="text" name="title" placeholder="标题" value="{{ topic.get('title','') }}">
+    <input type="hidden" name="content" id="content" value="hello">
+    <input type="submit" name="submit" value="发布">
+</form>
+<textarea id="editor" placeholder="内容" onkeyup="render()">{{ topic.get('content','') }}</textarea>
+<div id="view"></div>
+<script>
+    var parser = new HyperDown;
+    function render() {
+        var txt = document.getElementById("editor").value;
+        document.getElementById("view").innerHTML=parser.makeHtml(txt);
+    }
+    function update() {
+        var txt = document.getElementById("editor").value;
+        document.getElementById("content").value = txt;
+    }
+    render();
+</script>
+ -->
+{% extends "../../base/template/base.html" %}
+{% block title %}编辑{% end %}
+{% block css %}
+<link rel="stylesheet" href="{{ static_url("editor/editor.css")}}" />
+<style type="text/css">
+  .editor-wrapper {
+    max-width: 680px;
+    padding: 10px;
+    margin: 0px auto;
+  }
+</style>
+{% end %}
+{% block header%}{% end %}
+{% block body %}
+<div class="editor-wrapper">
+    <input id="title" class="title" type="text" placeholder="标题" />
+    <textarea id="editor" placeholder="Content here ...."></textarea>
+    <div>
+    <button id="cancel" class="am-btn am-btn-default am-radius am-btn-sm am-fl">返回</button>
+    <button id="publish" class="am-btn am-btn-default am-radius am-btn-sm am-fr">发布</button>
+    </div>
+</div>
+{% end %}
+{% block js %}
+<script type="text/javascript" src="{{ static_url("editor/editor.js") }}"></script>
+<script type="text/javascript" src="{{ static_url("editor/marked.js") }}"></script>
+<script type="text/javascript">
+    var editor = new Editor();
+    editor.render();
+</script>
+<script type="text/javascript">
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+    $(function(){
+        $("#publish").click(function(){
+            title = $('#title').val();
+            content = editor.codemirror.getValue();
+            $.post("/topics/new",{"title":title,"content":content,"_xsrf":getCookie("_xsrf")},
+                function(response){
+                    rtn = eval("(" + response + ")");
+                    if(rtn['success'] != 0) {
+                        location.href = "/topics/" + rtn['tid']
+                    } else {
+                        alert(rtn['msg']);
+                    }
+            });
+        });
+    });
+</script>
+{% end %}

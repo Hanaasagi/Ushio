@@ -3,6 +3,7 @@ import time
 import tornado.web
 import tornado.gen
 from bson import ObjectId
+import json
 from app.topic.model import TopicModel
 from ushio._base import BaseHandler
 
@@ -34,6 +35,7 @@ class HomeHandler(BaseHandler):
             cursor.sort([('top', -1), ('lastcomment', -1), ('time', -1)]
                         ).limit(limit).skip((page - 1) * limit)
             topics = yield cursor.to_list(length=limit)
+        print topics
         self.render('topic/template/topic.html', topics=topics)
 
 
@@ -54,10 +56,13 @@ class TopicNewHandler(BaseHandler):
     def post(self):
         title = self.get_body_argument('title', '')
         content = self.get_body_argument('content', '')
+        rtn = {'success': 1, 'tid': 0, 'msg': ''}
         if not self.current_user:
             self.redirect('/login')
         if self.current_user['money'] - self.settings['charge'] < 0:
-            self.custom_error('余额不足')
+            rtn['success'] = 0
+            rtn['msg'] = '余额不足'
+            # self.custom_error('余额不足')
 
         topic = {
             'title': title,
@@ -77,9 +82,15 @@ class TopicNewHandler(BaseHandler):
         model = TopicModel()
         if not model(topic):
             self.cache['topic'] = topic
-            self.custom_error()
+            rtn['success'] = 0
+            # self.custom_error()
+            self.write('0')
         tid = yield self.db.topic.insert(topic)
-        self.redirect('/topics/{}'.format(tid))
+        # self.redirect('/topics/{}'.format(tid))
+        # Ajax
+        rtn['tid'] = str(tid)
+        self.write(json.dumps(rtn))
+        self.finish()
 
 
 class NodeHandler(BaseHandler):

@@ -155,6 +155,9 @@ class LoginHandler(BaseHandler):
             if remember:
                 self.set_secure_cookie(
                     'TORNADOSESSION', cookie, expires_days=30)
+            else:
+                self.set_secure_cookie(
+                    'TORNADOSESSION', cookie, expires_days=1)
             yield self.db.user.find_and_modify(
                 {'username': username},
                 {'$set': {

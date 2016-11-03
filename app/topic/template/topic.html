@@ -65,7 +65,28 @@
                            <span class="am-badge am-round">12</span>
                         </td>
                     </tr>
-
+                    {% for topic in topics %}
+                    <tr class="row">
+                        <td width="6%" class="am-hide-sm-down">
+                            <img class="am-img-thumbnail am-circle" src="{{ static_url("img/avstar/avstar3.png")}}" width="40" height="40"/>
+                        </td>
+                        <td>
+                            <span class="item-title">
+                                <a href="/topics/{{ topic['_id'] }}" >
+                                    {{ topic['title'] }}
+                                </a>
+                            </span>
+                            <br>
+                            <span>
+                                <a class="am-badge am-round" href="/go/apple">Apple</a> &nbsp;•&nbsp;
+                                <strong><a href="/user/{{ topic['author'] }}">{{ topic['author'] }}</a></strong><div class="am-hide-sm-down"> &nbsp;•&nbsp; 最后由 <strong><a href="/member/lxfxf">lxfxf</a></strong> 回复于 12 分钟前</div>
+                            </span>
+                        </td>
+                        <td  style="vertical-align:middle;">
+                           <span class="am-badge am-round">12</span>
+                        </td>
+                    </tr>
+                    {% end %}
 
                 </table>
                 <div class="am-panel-footer">
