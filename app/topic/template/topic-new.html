@@ -35,8 +35,8 @@
 {% block header%}{% end %}
 {% block body %}
 <div class="editor-wrapper">
-    <input id="title" class="title" type="text" placeholder="标题" />
-    <textarea id="editor" placeholder="Content here ...."></textarea>
+    <input id="title" class="title" type="text" placeholder="标题" value="{{ topic.get('title','') }}"/>
+    <textarea id="editor" placeholder="Content here ....">{{ topic.get('content','') }}</textarea>
     <div>
     <button id="cancel" class="am-btn am-btn-default am-radius am-btn-sm am-fl">返回</button>
     <button id="publish" class="am-btn am-btn-default am-radius am-btn-sm am-fr">发布</button>

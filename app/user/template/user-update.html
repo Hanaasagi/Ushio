@@ -12,3 +12,73 @@
     {% end %}
 </body>
 </html>
+
+{% extends "../../base/template/base.html" %}
+{% block title %}更新个人信息{% end %}
+{% block body %}
+<div class="am-container">
+    <div class="am-g">
+        <div class="am-u-md-8 am-u-md-offset-1">
+            <ul class="am-nav am-nav-tabs">
+                <li class="am-active"><a name="profile" href="#">个人资料</a></li>
+                <li class=""><a name="update-password" href="#">修改密码</a></li>
+                <li class=""><a name="manage-account" href="#">账号管理</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="am-u-md-4 am-u-md-offset-1 am-u-sm-12">
+        <form name="profile" class="am-form">
+            <fieldset>
+                <div class="am-form-group">
+                    <label for="doc-ipt-username-1">用户名</label>
+                    <input type="text" class="" id="doc-ipt-email-1" placeholder="{{ userinfo['username'] }}" disabled>
+                </div>
+                <div class="am-form-group">
+                    <label for="doc-ipt-email-1">邮件</label>
+                    <input type="email" class="" id="doc-ipt-email-1" placeholder="{{ userinfo['email'] }}"
+                    disabled>
+                </div>
+
+                <div class="am-form-group">
+                  <label for="doc-ipt-pwd-1">密码</label>
+                  <input type="password" class="" id="doc-ipt-pwd-1" placeholder="设置个密码吧">
+                </div>
+            </fieldset>
+        </form>
+        <form name="update-password" class="am-form">
+            <fieldset>
+                <div class="am-form-group">
+                    <label for="doc-ipt-pwd-1">当前密码</label>
+                    <input type="password" name="password" class="" id="doc-ipt-pwd-1" placeholder="">
+                </div>
+                <div class="am-form-group">
+                    <label for="doc-ipt-pwd-1">新密码</label>
+                    <input type="password" name="new_password" class="" id="doc-ipt-pwd-1" placeholder="">
+                </div>
+                <div class="am-form-group">
+                     <label for="doc-ipt-pwd-1">确认密码</label>
+                    <input type="password" name="re_password" class="" id="doc-ipt-pwd-1" placeholder="">
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+{% end %}
+{% block js%}
+<script type="text/javascript">
+
+    $(function(){
+        $("a").click(function(){
+            var dom = this;
+            ["profile", "update-password", "manage-account"].forEach(function(name){
+                if(dom.name == name) {
+                    $("form[name='"+dom.name+"']").show();
+                }else {
+                    $("form[name='"+name+"']").hide();
+                }                
+            })
+        });
+    });
+</script>
+{% end %}

@@ -52,7 +52,7 @@ class UpdateHandler(BaseHandler):
         })
         model = UserModel()
         print user
-        self.render('user/template/user.html', userinfo=user,
+        self.render('user/template/user-update.html', userinfo=user,
                     label_map=model.get_label())
 
     @tornado.web.asynchronous

@@ -35,7 +35,6 @@ class HomeHandler(BaseHandler):
             cursor.sort([('top', -1), ('lastcomment', -1), ('time', -1)]
                         ).limit(limit).skip((page - 1) * limit)
             topics = yield cursor.to_list(length=limit)
-        print topics
         self.render('topic/template/topic.html', topics=topics)
 
 
@@ -71,10 +70,10 @@ class TopicNewHandler(BaseHandler):
             'author': self.current_user['username'],
             'view': 0,
             'like': 0,
+            'comment': [],
             'price': 0,  # 价格
             'time': time.time(),
             'star': False,  # 精华
-            'comment': [],
             'top': False,   # 置顶
             'lastcomment': time.time()
         }
@@ -85,7 +84,19 @@ class TopicNewHandler(BaseHandler):
             rtn['success'] = 0
             # self.custom_error()
             self.write('0')
+
+        #
+        # 这里应当创建topic时顺便将对应的comment也创建好
+        # 还是当第一条评论出现时再创建comment
+        #
+        # comment = {
+        #     'comment': []
+        # }
+        # cid = yield self.db.comment.insert(comment)
+        # # 是否 DBRef ?
+        # topic['comment'] = ObjectId(cid)
         tid = yield self.db.topic.insert(topic)
+
         # self.redirect('/topics/{}'.format(tid))
         # Ajax
         rtn['tid'] = str(tid)
@@ -121,16 +132,16 @@ class TopicHandler(BaseHandler):
         '''
             帖子详情页
         '''
-        try:
-            tid = ObjectId(topic_id)
-            topic = yield self.db.topic.find_one({
-                '_id': tid
-            })
-            assert topic is not None
-        except:
+        topic = dict()
+        tid = ObjectId(topic_id)
+        topic = yield self.db.topic.find_one({
+            '_id': tid
+        })
+        if topic is None:
             self.custom_error()
         ismine = False
-        if topic['author_id'] == self.current_user['_id']:
+        current_user = self.current_user
+        if current_user and topic['author_id'] == current_user['_id']:
             ismine = True
         self.render('topic/template/topic-detail.html',
                     topic=topic, ismine=ismine)
@@ -144,14 +155,15 @@ class TopicUpdateHandler(BaseHandler):
     @tornado.web.asynchronous
     @tornado.gen.coroutine
     def get(self, tid):
-        try:
-            tid = ObjectId(tid)
-            topic = yield self.db.topic.find_one({
-                '_id': tid
-            })
-            assert topic is not None
-            assert topic['author_id'] == self.current_user['_id']
-        except:
+        tid = ObjectId(tid)
+        topic = yield self.db.topic.find_one({
+            '_id': tid
+        })
+        print topic
+        if topic is None:
+            self.custom_error('不存在这个帖子')
+        current_user = self.current_user
+        if current_user is None or topic['author_id'] != current_user['_id']:
             self.custom_error('您无权进行修改')
         self.render('topic/template/topic-new.html', topic=topic)
 

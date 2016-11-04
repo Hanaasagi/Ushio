@@ -6,7 +6,7 @@
         <div>
             <table class="am-table am-text-sm am-scrollable-horizontal">
                 <tr class="row">
-                    <td width="6%" class="am-hide-sm-down">
+                    <td width="60">
                         <img class="am-img-thumbnail am-circle" src="{{ static_url("img/avstar/avstar3.png")}}" width="50" height="50"/>
                     </td>
                     <td>
@@ -35,7 +35,29 @@
                 {{ topic['content'] }}
             </div>
         </article>
-        <hr>
+        <br><br>
+
+
+        <form class="am-form">
+            <fieldset>
+                <table class="am-table am-text-sm am-scrollable-horizontal">
+                    <tr class="row">
+                        <td width="60">
+                            <img class="am-img-thumbnail am-circle" src="{{ static_url("img/avstar/avstar3.png")}}" width="50" height="50"/>
+                        </td>
+                        <td>
+                            <div class="am-form-group">
+                                <textarea style="resize: None" rows="4" id="comment"></textarea>
+                            </div>
+                            <div class="am-form-group">
+                                <button type="button" id="publish" class="am-fr am-btn am-btn-primary">提交</button>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+        </form>
+
         <ul class="am-comments-list am-comments-list-flip">
             <li class="am-comment"> <!-- 评论容器 -->
                 <a href="">
@@ -52,21 +74,22 @@
                     <div class="am-comment-bd">hello</div> <!-- 评论内容 -->
                 </div>
             </li>
-            <li class="am-comment am-comment-flip"> <!-- 评论容器 -->
-                <a href="">
-                    <img class="am-comment-avatar" src="{{ static_url("img/avstar/avstar3.png")}} alt=""/> <!-- 评论者头像 -->
+            {% for comment in topic['comment'] %}
+            <li class="am-comment">
+                <a href="/user/{{ comment['username'] }}">
+                    <img class="am-comment-avatar" src="{{ static_url("img/avstar/" + comment['_id'] + ".png")}} alt=""/>
                 </a>
-                <div class="am-comment-main"> <!-- 评论内容容器 -->
+                <div class="am-comment-main">
                     <header class="am-comment-hd">
-                    <!--<h3 class="am-comment-title">评论标题</h3>-->
-                        <div class="am-comment-meta"> <!-- 评论元数据 -->
-                            <a href="#link-to-user" class="am-comment-author">AAAA</a> <!-- 评论者 -->
-                                评论于 <time datetime="">2016/11/3</time>
+                        <div class="am-comment-meta">
+                            <a href="/user/{{ comment['username'] }}" class="am-comment-author">{{ comment['username'] }}</a>
+                                评论于 <time datetime="">{{ comment['time'] }}</time>
                         </div>
                     </header>
-                    <div class="am-comment-bd">hello</div> <!-- 评论内容 -->
+                    <div class="am-comment-bd">{{ comment['content'] }}</div>
                 </div>
             </li>
+            {% end %}
         </ul>
     </div>
             <!-- goto top -->
@@ -112,4 +135,27 @@
       </figcaption>
 </figure> -->
 <!-- end 图片 -->
+{% end %}
+{% block js %}
+<script type="text/javascript">
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+    $(function(){
+        $("#publish").click(function(){
+            content = $('#comment').val();
+            $.post("/comments/new",{"tid":"{{topic['_id']}}",
+                "content":content,
+                "uid":"{{current_user['_id']}}",
+                "_xsrf":getCookie("_xsrf")},
+                function(response){
+                    rtn = eval("(" + response + ")");
+                    if(rtn['success'] != true) {
+                        alert(rtn['msg']);
+                    }
+            });
+        });
+    });
+</script>
 {% end %}
