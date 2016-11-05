@@ -60,19 +60,22 @@ class UpdateHandler(BaseHandler):
     @tornado.web.authenticated
     def post(self):
         profile = {}
-        profile['address'] = self.get_body_argument('address', '')
-        profile['qq'] = self.get_body_argument('qq', '')
-        profile['email'] = self.get_body_argument('email', '')
-        profile['website'] = self.get_body_argument('website', '')
+        info = {}
+        info['address'] = self.get_body_argument('address', '')
+        info['qq'] = self.get_body_argument('qq', '')
+        info['website'] = self.get_body_argument('website', '')
 
         model = UserModel()
-        if not model(profile):
+        if not model(info):
+            print model.error_msg
             self.custom_error(model.error_msg)
+        else:
+            profile.update(info)
 
         password = self.get_body_argument('password', '')
         if password:
-            new_password = self.get_body_argument('newpassword', '')
-            re_password = self.get_body_argument('repassword', '')
+            new_password = self.get_body_argument('new_password', '')
+            re_password = self.get_body_argument('re_password', '')
             if len(new_password) <= 6:
                 self.custom_error('新密码太短')
             if new_password != re_password:
@@ -86,21 +89,13 @@ class UpdateHandler(BaseHandler):
                     new_password, self.settings['salt']).hexdigest()
             else:
                 self.custom_error('原始密码输入错误')
-        isexisted = yield self.db.user.find_one({
-            'email': profile['email']
-        })
-        if isexisted:
-            self.custom_error('邮箱已经被人使用')
-        # model 验证
-        #
-        #
-        #
 
         yield self.db.user.update({
             'username': self.current_user['username']
         }, {
             '$set': profile
         })
+        print profile
         self.redirect('/user/update')
 
 
@@ -241,26 +236,25 @@ class DeleteHandler(BaseHandler):
     def initialize(self):
         super(DeleteHandler, self).initialize()
 
-    def get(self):
-        #
-        # 显示验证码
-        #
-        pass
-
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
     def post(self):
         #
-        # 对验证码进行验证
         # 删除数据库用户
         # 删除用户session
         #
-        captcha = self.get_body_argument('captcha', '')
-        if not Captcha.verify(captcha, self):
-            self.redirect('?captcha_wrong')
-        if self.get_cookie('TORNADOSESSION'):
-            self.clear_cookie('TORNADOSESSION')
-        print self.current_user
-        self.db.user.remove({
-            '_id': ObjectId(self.current_user['_id'])
-        })
-        self.session.delete('user_session')
-        self.redirect('/')
+        password = self.get_body_argument('password', '')
+        if password:
+            user = yield self.db.user.find_one({
+                'username': self.current_user['username']
+            })
+            _ = md5(password + self.settings['salt'])
+            if user['password'] == _.hexdigest():
+                if self.get_cookie('TORNADOSESSION'):
+                    self.clear_cookie('TORNADOSESSION')
+                self.db.user.remove({
+                    '_id': ObjectId(self.current_user['_id'])
+                })
+                self.session.delete('user_session')
+                self.redirect('/')
+        self.custom_error('原始密码输入错误')

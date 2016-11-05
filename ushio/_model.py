@@ -16,6 +16,17 @@ class Model(object):
         }
     }
     '''
+    __msg__ = {
+        'type': '%s 的类型错误',
+        'max_length': '%s 超过最大长度',
+        'min_lenght': '%s 长度过短',
+        'number': '%s 为非数字类型',
+        'min': '%s 的值过小',
+        'max': '%s 的值过大',
+        'url': '%s 含有不合法符号',
+        'email': '%s 含有不合法符号',
+        'pattern': '%s'
+    }
 
     def get_label(self):
         label_map = {}
@@ -31,7 +42,7 @@ class Model(object):
             if (not value) and ('required' not in self.__rules__[k]):
                 continue
             for (field, limit) in self.__rules__[k].items():
-                if field == '_label':
+                if field == 'label':
                     continue
                 func = '_check_%s' % field
                 if hasattr(self, func):

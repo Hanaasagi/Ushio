@@ -57,23 +57,10 @@
                 </table>
             </fieldset>
         </form>
-
+        {% if len(topic['comment']) == 0 %}
+            <center>目前还没有评论</center>
+        {% end %}
         <ul class="am-comments-list am-comments-list-flip">
-            <li class="am-comment"> <!-- 评论容器 -->
-                <a href="">
-                    <img class="am-comment-avatar" src="{{ static_url("img/avstar/avstar3.png")}} alt=""/> <!-- 评论者头像 -->
-                </a>
-                <div class="am-comment-main"> <!-- 评论内容容器 -->
-                    <header class="am-comment-hd">
-                    <!--<h3 class="am-comment-title">评论标题</h3>-->
-                        <div class="am-comment-meta"> <!-- 评论元数据 -->
-                            <a href="#link-to-user" class="am-comment-author">AAAA</a> <!-- 评论者 -->
-                                评论于 <time datetime="">2016/11/3</time>
-                        </div>
-                    </header>
-                    <div class="am-comment-bd">hello</div> <!-- 评论内容 -->
-                </div>
-            </li>
             {% for comment in topic['comment'] %}
             <li class="am-comment">
                 <a href="/user/{{ comment['username'] }}">

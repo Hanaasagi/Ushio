@@ -20,34 +20,52 @@
     <div class="am-g">
         <div class="am-u-md-8 am-u-md-offset-1">
             <ul class="am-nav am-nav-tabs">
-                <li class="am-active"><a name="profile" href="#">个人资料</a></li>
-                <li class=""><a name="update-password" href="#">修改密码</a></li>
-                <li class=""><a name="manage-account" href="#">账号管理</a></li>
+                <li name="profile" class="am-active"><a name="profile" href="#">个人资料</a></li>
+                <li name="update-password" class=""><a name="update-password" href="#">修改密码</a></li>
+                <li name="privite-setting" class=""><a name="privite-setting" href="#">隐私设置</a></li>
+                <li name="manage-account" class=""><a name="manage-account" href="#">账号管理</a></li>
             </ul>
         </div>
     </div>
 
     <div class="am-u-md-4 am-u-md-offset-1 am-u-sm-12">
-        <form name="profile" class="am-form">
+        <form name="profile" action="" method="POST" class="am-form">
             <fieldset>
+                {% module xsrf_form_html() %}
                 <div class="am-form-group">
                     <label for="doc-ipt-username-1">用户名</label>
                     <input type="text" class="" id="doc-ipt-email-1" placeholder="{{ userinfo['username'] }}" disabled>
                 </div>
                 <div class="am-form-group">
-                    <label for="doc-ipt-email-1">邮件</label>
+                    <label for="doc-ipt-email-1">邮箱</label>
                     <input type="email" class="" id="doc-ipt-email-1" placeholder="{{ userinfo['email'] }}"
                     disabled>
                 </div>
-
                 <div class="am-form-group">
-                  <label for="doc-ipt-pwd-1">密码</label>
-                  <input type="password" class="" id="doc-ipt-pwd-1" placeholder="设置个密码吧">
+                    <label for="doc-ipt-file-1">头像</label>
+                    <input type="file" id="doc-ipt-file-1">
+                    <p class="am-form-help">请选择要上传的文件...</p>
+                </div>
+                <div class="am-form-group">
+                    <label>QQ</label>
+                    <input type="text" name="qq" class="" value="{{ userinfo['qq'] }}" placeholder="未填写">
+                </div>
+                <div class="am-form-group">
+                    <label>地址</label>
+                    <input type="text" name="address" class="" value="{{ userinfo['address'] }}" placeholder="未填写">
+                </div>
+                <div class="am-form-group">
+                    <label>个人主页</label>
+                    <input type="text" name="website" class="" value="{{ userinfo['website'] }}" placeholder="未填写">
+                </div>
+                <div class="am-form-group">
+                    <input type="submit" class="am-btn am-btn-primary" value="保存">
                 </div>
             </fieldset>
         </form>
-        <form name="update-password" class="am-form">
+        <form name="update-password" action="" method="POST" class="am-form" hidden>
             <fieldset>
+                {% module xsrf_form_html() %}
                 <div class="am-form-group">
                     <label for="doc-ipt-pwd-1">当前密码</label>
                     <input type="password" name="password" class="" id="doc-ipt-pwd-1" placeholder="">
@@ -57,8 +75,79 @@
                     <input type="password" name="new_password" class="" id="doc-ipt-pwd-1" placeholder="">
                 </div>
                 <div class="am-form-group">
-                     <label for="doc-ipt-pwd-1">确认密码</label>
+                    <label for="doc-ipt-pwd-1">确认密码</label>
                     <input type="password" name="re_password" class="" id="doc-ipt-pwd-1" placeholder="">
+                </div>
+                <div class="am-form-group">
+                    <p><input type="submit" class="am-btn am-btn-primary am-btn-sm" name="delete" value="确认"></p>
+                </div>
+            </fieldset>
+        </form>
+        <form name="privite-setting" class="am-form" hidden>
+            <fieldset>
+                {% module xsrf_form_html() %}
+                <div>
+                    <label>公开邮箱</label>
+                    <div class="am-radio">
+                        <label>
+                            <input type="radio" name="doc-radio-1" value="option1" checked>
+                            公开
+                        </label>
+                    </div>
+
+                    <div class="am-radio">
+                        <label>
+                            <input type="radio" name="doc-radio-1" value="option2">
+                           隐私
+                        </label>
+                    </div>
+                </div>
+                <hr>
+                <div>
+                    <label>公开QQ</label>
+                    <div class="am-radio">
+                        <label>
+                            <input type="radio" name="doc-radio-2" value="option1" checked>
+                            公开
+                        </label>
+                    </div>
+
+                    <div class="am-radio">
+                        <label>
+                            <input type="radio" name="doc-radio-2" value="option2">
+                           隐私
+                        </label>
+                    </div>
+                </div>
+                <hr>
+                <div>
+                    <label>收藏夹</label>
+                    <div class="am-radio">
+                        <label>
+                            <input type="radio" name="doc-radio-3" value="option1" checked>
+                            公开
+                        </label>
+                    </div>
+
+                    <div class="am-radio">
+                        <label>
+                            <input type="radio" name="doc-radio-3" value="option2">
+                           隐私
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+        <form name="manage-account" action="/user/delete" method="POST" class="am-form" hidden>
+            <fieldset>
+                {% module xsrf_form_html() %}
+                <div class="am-form-group">
+                    <label for="doc-ipt-pwd-1">当前密码</label>
+                    <input type="password" name="password" class="" id="doc-ipt-pwd-1" placeholder="">
+                </div>
+                <div class="am-form-group">
+                    <label>删除操作不可逆</label>
+                    <p><input type="submit" class="am-btn am-btn-danger am-btn-sm" name="delete" value="delete"></p>
                 </div>
             </fieldset>
         </form>
@@ -71,14 +160,23 @@
     $(function(){
         $("a").click(function(){
             var dom = this;
-            ["profile", "update-password", "manage-account"].forEach(function(name){
+            ["profile", "update-password", "manage-account", "privite-setting"].forEach(function(name){
                 if(dom.name == name) {
+                    $("li[name='"+dom.name+"']").addClass("am-active");
                     $("form[name='"+dom.name+"']").show();
                 }else {
+                    $("li[name='"+name+"']").removeClass("am-active");
                     $("form[name='"+name+"']").hide();
                 }                
             })
         });
+            $('#doc-form-file').on('change', function() {
+      var fileNames = '';
+      $.each(this.files, function() {
+        fileNames += '<span class="am-badge">' + this.name + '</span> ';
+      });
+      $('#file-list').html(fileNames);
+    });
     });
 </script>
 {% end %}
