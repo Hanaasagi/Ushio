@@ -94,6 +94,7 @@ class RegisterHandler(BaseHandler):
             'signal': u'这个人太懒，还没有留下任何东西',
             'openemail': 1,
             'openfavorite': 1,
+            'openqq': 1,
             'allowemail': 1,
             'logintime': None,
             'loginip': self.request.remote_ip

@@ -61,10 +61,15 @@ class UpdateHandler(BaseHandler):
     def post(self):
         profile = {}
         info = {}
+
+        info['openqq'] = int(self.get_body_argument('openqq', 1))
+        info['openemail'] = int(self.get_body_argument('openemail', 1))
+        info['openfavorite'] = int(self.get_body_argument('openfavorite', 1))
+        info['allowemail'] = int(self.get_body_argument('allowemail', 1))
+
         info['address'] = self.get_body_argument('address', '')
         info['qq'] = self.get_body_argument('qq', '')
         info['website'] = self.get_body_argument('website', '')
-
         model = UserModel()
         if not model(info):
             print model.error_msg
@@ -76,17 +81,17 @@ class UpdateHandler(BaseHandler):
         if password:
             new_password = self.get_body_argument('new_password', '')
             re_password = self.get_body_argument('re_password', '')
-            if len(new_password) <= 6:
+            if len(new_password) < 6:
                 self.custom_error('新密码太短')
             if new_password != re_password:
                 self.custom_error('两次输入的密码不相同')
             user = yield self.db.user.find_one({
                 'username': self.current_user['username']
             })
-            _ = md5(password, self.settings['salt'])
+            _ = md5(password + self.settings['salt'])
             if user['password'] == _.hexdigest():
                 profile['password'] = md5(
-                    new_password, self.settings['salt']).hexdigest()
+                    new_password + self.settings['salt']).hexdigest()
             else:
                 self.custom_error('原始密码输入错误')
 

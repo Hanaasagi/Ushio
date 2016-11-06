@@ -19,7 +19,7 @@ class Model(object):
     __msg__ = {
         'type': '%s 的类型错误',
         'max_length': '%s 超过最大长度',
-        'min_lenght': '%s 长度过短',
+        'min_length': '%s 长度过短',
         'number': '%s 为非数字类型',
         'min': '%s 的值过小',
         'max': '%s 的值过大',

@@ -1,18 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>个人信息</title>
-</head>
-<body>
-    {% for k, v in userinfo.items() %}
-    <div>
-        {{ label_map.get(k, k) }}
-        <input type="text" name="{{k}}" value="{{v}}">
-    </div>
-    {% end %}
-</body>
-</html>
-
 {% extends "../../base/template/base.html" %}
 {% block title %}更新个人信息{% end %}
 {% block body %}
@@ -83,21 +68,20 @@
                 </div>
             </fieldset>
         </form>
-        <form name="privite-setting" class="am-form" hidden>
+        <form name="privite-setting" action="" method="POST" class="am-form" hidden>
             <fieldset>
                 {% module xsrf_form_html() %}
                 <div>
                     <label>公开邮箱</label>
                     <div class="am-radio">
                         <label>
-                            <input type="radio" name="doc-radio-1" value="option1" checked>
+                            <input type="radio" name="openemail" value="1" {{ ('', 'checked')[userinfo['openemail']] }}>
                             公开
                         </label>
                     </div>
-
                     <div class="am-radio">
                         <label>
-                            <input type="radio" name="doc-radio-1" value="option2">
+                            <input type="radio" name="openemail" value="0" {{ ('checked', '')[userinfo['openemail']] }}>
                            隐私
                         </label>
                     </div>
@@ -107,14 +91,13 @@
                     <label>公开QQ</label>
                     <div class="am-radio">
                         <label>
-                            <input type="radio" name="doc-radio-2" value="option1" checked>
+                            <input type="radio" name="openqq" value="1" {{ ('', 'checked')[userinfo['openqq']] }}>
                             公开
                         </label>
                     </div>
-
                     <div class="am-radio">
                         <label>
-                            <input type="radio" name="doc-radio-2" value="option2">
+                            <input type="radio" name="openqq" value="0" {{ ('checked', '')[userinfo['openqq']] }}>
                            隐私
                         </label>
                     </div>
@@ -124,17 +107,36 @@
                     <label>收藏夹</label>
                     <div class="am-radio">
                         <label>
-                            <input type="radio" name="doc-radio-3" value="option1" checked>
+                            <input type="radio" name="openfavorite" value="1" {{ ('', 'checked')[userinfo['openfavorite']] }}>
                             公开
                         </label>
                     </div>
-
                     <div class="am-radio">
                         <label>
-                            <input type="radio" name="doc-radio-3" value="option2">
+                            <input type="radio" name="openfavorite" value="0" {{ ('checked', '')[userinfo['openfavorite']] }}>
                            隐私
                         </label>
                     </div>
+                </div>
+                <hr>
+                <div>
+                    <label>邮件提醒</label>
+                    <div class="am-radio">
+                        <label>
+                            <input type="radio" name="allowemail" value="1" {{ ('', 'checked')[userinfo['allowemail']] }}>
+                            允许
+                        </label>
+                    </div>
+                    <div class="am-radio">
+                        <label>
+                            <input type="radio" name="allowemail" value="0" {{ ('checked', '')[userinfo['allowemail']] }}>
+                           拒绝
+                        </label>
+                    </div>
+                </div>
+                <br>
+                <div class="am-form-group">
+                    <input type="submit" class="am-btn am-btn-primary" value="保存">
                 </div>
             </fieldset>
         </form>
