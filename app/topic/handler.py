@@ -2,8 +2,8 @@
 import time
 import tornado.web
 import tornado.gen
-from bson import ObjectId
 import json
+from bson import ObjectId
 from app.topic.model import TopicModel
 from ushio._base import BaseHandler
 

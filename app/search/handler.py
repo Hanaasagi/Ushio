@@ -16,7 +16,7 @@ class SearchHandler(BaseHandler):
         keyword = self.get_query_argument('keyword', '')
         if not keyword:
             self.custom_error('关键词不能为空')
-        keyword = '.*{}.*'.format(re.escape(keyword))
+        pattern = u'.*{}.*'.format(re.escape(keyword))
         limit = 20
         page = int(self.get_query_argument('page', default=1))
         page = 1 if page <= 0 else page
@@ -24,10 +24,11 @@ class SearchHandler(BaseHandler):
         # 暂且仅对title进行搜索
         # 未来或许使用 elstiasearch 全文搜索
         cursor = self.db.topic.find({
-            'title': {'$regex': keyword, '$options': 'i'}
+            'title': {'$regex': pattern, '$options': 'i'}
         })
-        count = yield cursor.count()
+        total = yield cursor.count()
         cursor.sort([('time', -1)]).limit(
             limit).skip((page - 1) * limit)
         topics = yield cursor.to_list(length=limit)
-        self.render('search.html', topics=posts, page=page, keyword=keyword)
+        self.render('search/template/search.html',
+                    topics=topics, total=total, page=page, keyword=keyword)

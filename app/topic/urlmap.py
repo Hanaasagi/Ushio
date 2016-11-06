@@ -8,5 +8,5 @@ urlpattern = (
     (r'/topics/new', TopicNewHandler),
     (r'/node/(\w+)', NodeHandler),
     (r'/topics/(\w+)', TopicHandler),
-    (r'/topics/update/(\w+)', TopicUpdateHandler)
+    (r'/topics/update/(\w+)', TopicUpdateHandler),
 )

@@ -3,5 +3,5 @@
 from handler import SearchHandler
 
 urlpattern = (
-    (r'/search', SearchHandler)
+    (r'/search', SearchHandler),
 )
