@@ -39,7 +39,7 @@ class CommentNewHandler(BaseHandler):
                 }
             })
             if rtn:
-                self.write('success:true')
+                self.write('{"success":true}')
                 self.finish()
 
         self.custom_error()

@@ -17,24 +17,28 @@ class HomeHandler(BaseHandler):
     @tornado.gen.coroutine
     def get(self):
         '''
-            首页 tab页
+            首页 zone页
         '''
-        tab = self.get_query_argument('tab', '')
-        if tab:
-            topics = yield self.db.topic.find({
-                'tab': tab
+        zone = self.get_query_argument('zone', '')
+        limit = 20
+        page = 1
+        if zone:
+            cursor = self.db.topic.find({
+                'zone': zone
+            }, {
+                'content': 0,
+                'like': 0,
+                'unlike': 0,
             })
         else:
-            limit = 20
-            page = 1
             cursor = self.db.topic.find({}, {
                 'content': 0,
                 'like': 0,
                 'unlike': 0,
             })
-            cursor.sort([('top', -1), ('lastcomment', -1), ('time', -1)]
-                        ).limit(limit).skip((page - 1) * limit)
-            topics = yield cursor.to_list(length=limit)
+        cursor.sort([('top', -1), ('lastcomment', -1), ('time', -1)]
+                    ).limit(limit).skip((page - 1) * limit)
+        topics = yield cursor.to_list(length=limit)
         self.render('topic/template/topic.html', topics=topics)
 
 
@@ -55,6 +59,8 @@ class TopicNewHandler(BaseHandler):
     def post(self):
         title = self.get_body_argument('title', '')
         content = self.get_body_argument('content', '')
+        node = self.get_body_argument('node', '')
+        zone = self.get_body_argument('zone', '')
         rtn = {'success': 1, 'tid': 0, 'msg': ''}
         if not self.current_user:
             self.redirect('/login')
@@ -70,6 +76,8 @@ class TopicNewHandler(BaseHandler):
             'author': self.current_user['username'],
             'view': 0,
             'like': 0,
+            'node': node,
+            'zone': zone,
             'comment': [],
             'price': 0,  # 价格
             'time': time.time(),

@@ -1,25 +1,3 @@
-<!-- 
-<form method="POST" action="" onsubmit="update()">
-    {% module xsrf_form_html() %}
-    <input type="text" name="title" placeholder="标题" value="{{ topic.get('title','') }}">
-    <input type="hidden" name="content" id="content" value="hello">
-    <input type="submit" name="submit" value="发布">
-</form>
-<textarea id="editor" placeholder="内容" onkeyup="render()">{{ topic.get('content','') }}</textarea>
-<div id="view"></div>
-<script>
-    var parser = new HyperDown;
-    function render() {
-        var txt = document.getElementById("editor").value;
-        document.getElementById("view").innerHTML=parser.makeHtml(txt);
-    }
-    function update() {
-        var txt = document.getElementById("editor").value;
-        document.getElementById("content").value = txt;
-    }
-    render();
-</script>
- -->
 {% extends "../../base/template/base.html" %}
 {% block title %}编辑{% end %}
 {% block css %}
@@ -35,12 +13,53 @@
 {% block header%}{% end %}
 {% block body %}
 <div class="editor-wrapper">
-    <input id="title" class="title" type="text" placeholder="标题" value="{{ topic.get('title','') }}"/>
-    <textarea id="editor" placeholder="Content here ....">{{ topic.get('content','') }}</textarea>
-    <div>
-    <button id="cancel" class="am-btn am-btn-default am-radius am-btn-sm am-fl">返回</button>
-    <button id="publish" class="am-btn am-btn-default am-radius am-btn-sm am-fr">发布</button>
-    </div>
+<form class="am-form">
+    <fieldset>
+        <input id="title" class="title" type="text" placeholder="标题" value="{{ topic.get('title','') }}"/>
+        <textarea id="editor" placeholder="Content here ....">{{ topic.get('content','') }}</textarea>
+        <div class="am-u-md-8 am-fl">
+            <div class="am-form-group">
+                <div>
+                    <label for="doc-select-1">分区</label>
+                </div>
+                <div>
+                    <label class="am-radio-inline">
+                        <input type="radio"  value="animate" id="raido" name="docInlineRadio" checked> 动漫
+                    </label>
+                    <label class="am-radio-inline">
+                        <input type="radio" value="music" id="raido" name="docInlineRadio"> 音乐
+                    </label>
+                    <label class="am-radio-inline">
+                        <input type="radio" value="lightnovel" id="raido" name="docInlineRadio"> 轻小说
+                    </label>
+                    <label class="am-radio-inline">
+                        <input type="radio" value="jinsei" id="raido" name="docInlineRadio"> 人生相谈
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="am-u-md-4 am-fr">
+            <div class="am-form-group">
+                <label for="doc-select-1">节点</label>
+                <div>
+                    <select id="node" data-am-selected="{searchBox: 1}">
+                        <option value="a">我的妹妹不可能那么可爱</option>
+                        <option value="b">Banana</option>
+                        <option value="o">Orange</option>
+                        <option value="m">Mango</option>
+                        <option value="phone">iPhone</option>
+                        <option value="im">iMac</option>
+                        <option value="mbp">Macbook Pro</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="am-u-md-12">
+            <button type="button" id="cancel" class="am-btn am-btn-default am-radius am-btn-sm am-fl">返回</button>
+            <button type="button" id="publish" class="am-btn am-btn-default am-radius am-btn-sm am-fr">发布</button>
+        </div>
+    </fieldset>
+</form>
 </div>
 {% end %}
 {% block js %}
@@ -59,7 +78,13 @@
         $("#publish").click(function(){
             title = $('#title').val();
             content = editor.codemirror.getValue();
-            $.post("/topics/new",{"title":title,"content":content,"_xsrf":getCookie("_xsrf")},
+            node = $('#node option:selected').val();
+            zone = $('input[type="radio"]:checked').val();
+            $.post("/topics/new",{"title":title,
+                "content":content,
+                "node":node,
+                "zone":zone,
+                "_xsrf":getCookie("_xsrf")},
                 function(response){
                     rtn = eval("(" + response + ")");
                     if(rtn['success'] != 0) {

@@ -138,8 +138,11 @@
                 "_xsrf":getCookie("_xsrf")},
                 function(response){
                     rtn = eval("(" + response + ")");
+                    console.log(rtn);
                     if(rtn['success'] != true) {
                         alert(rtn['msg']);
+                    } else {
+                        window.location.reload();
                     }
             });
         });
