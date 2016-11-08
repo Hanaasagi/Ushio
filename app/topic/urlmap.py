@@ -1,7 +1,8 @@
 # -*-coding:UTF-8-*-
 
 from app.topic.handler import TopicHandler, HomeHandler, \
-    NodeHandler, TopicNewHandler, TopicUpdateHandler
+    NodeHandler, TopicNewHandler, TopicUpdateHandler,\
+    TopicLikeHandler
 
 urlpattern = (
     (r'/', HomeHandler),
@@ -9,4 +10,5 @@ urlpattern = (
     (r'/node/(\w+)', NodeHandler),
     (r'/topics/(\w+)', TopicHandler),
     (r'/topics/update/(\w+)', TopicUpdateHandler),
+    (r'/topics/like/(\w+)', TopicLikeHandler),
 )

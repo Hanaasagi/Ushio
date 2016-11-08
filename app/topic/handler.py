@@ -155,6 +155,45 @@ class TopicHandler(BaseHandler):
                     topic=topic, ismine=ismine)
 
 
+class TopicLikeHandler(BaseHandler):
+
+    def initialize(self):
+        super(TopicLikeHandler, self).initialize()
+
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    def get(self, tid):
+        tid = ObjectId(tid)
+        uid = self.current_user.get('_id', '')
+        if tid and uid:
+            user = yield self.db.user.find_one({
+                '_id': ObjectId(uid)
+            }, {
+                'favorite': 1
+            })
+            if tid in user['favorite']:
+                rtn = yield self.db.user.find_and_modify({
+                    '_id': ObjectId(uid)
+                }, {
+                    '$pull': {
+                        'favorite': tid
+                    }
+                })
+            else:
+                rtn = yield self.db.user.find_and_modify({
+                    '_id': ObjectId(uid)
+                }, {
+                    '$push': {
+                        'favorite': tid
+                    }
+                })
+            if rtn:
+                self.write('{"success":true}')
+                self.finish()
+        else:
+            self.custom_error()
+
+
 class TopicUpdateHandler(BaseHandler):
 
     def initialize(self):
