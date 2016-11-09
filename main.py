@@ -4,6 +4,7 @@ import sys
 import yaml
 from concurrent import futures
 from ushio.urlmap import urlpattern
+from uimodule import uimodule
 from motor.motor_tornado import MotorClient
 from tornado.ioloop import IOLoop
 from tornado.httpserver import HTTPServer
@@ -23,6 +24,7 @@ banner = r'''
 print banner
 
 setting = {
+    'ui_modules': uimodule,
     'cookie_secret': '__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__',
     'config_file': './setting.yaml',
     'compress_response': True,

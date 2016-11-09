@@ -38,11 +38,15 @@
                             <br>
                             <span>
                                 <a class="am-badge am-round" href="/go/apple">{{ topic['node'] }}</a> &nbsp;•&nbsp;
-                                <strong><a href="/user/{{ topic['author'] }}">{{ topic['author'] }}</a></strong><div class="am-hide-sm-down"> &nbsp;•&nbsp; 最后由 <strong><a href="/member/lxfxf">lxfxf</a></strong> 回复于 12 分钟前</div>
+                                {% if topic['comment'] %}
+                                <strong><a href="/user/{{ topic['author'] }}">{{ topic['author'] }}</a></strong><div class="am-hide-sm-down"> &nbsp;•&nbsp; 最后由 <strong><a href="/user/{{ topic['comment'][-1]['username'] }}">{{ topic['comment'][-1]['username'] }}</a></strong> 回复于 {% module TimeSpan(topic['comment'][-1]['time']) %}</div>
+                                {% else %}
+                                目前还没有人回复
+                                {% end %}
                             </span>
                         </td>
                         <td  style="vertical-align:middle;">
-                           <span class="am-badge am-round">12</span>
+                           <span class="am-badge am-round">{{len(topic['comment'])}}</span>
                         </td>
                     </tr>
                     {% end %}

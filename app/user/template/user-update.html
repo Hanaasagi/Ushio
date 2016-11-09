@@ -158,19 +158,21 @@
 {% end %}
 {% block js%}
 <script type="text/javascript">
-
     $(function(){
         $("a").click(function(){
             var dom = this;
-            ["profile", "update-password", "manage-account", "privite-setting"].forEach(function(name){
-                if(dom.name == name) {
-                    $("li[name='"+dom.name+"']").addClass("am-active");
-                    $("form[name='"+dom.name+"']").show();
-                }else {
-                    $("li[name='"+name+"']").removeClass("am-active");
-                    $("form[name='"+name+"']").hide();
-                }                
-            })
+            var array = ["profile", "update-password", "manage-account", "privite-setting"];
+            if($.inArray(this.name, array) != -1) {
+                array.forEach(function(name){
+                    if(dom.name == name) {
+                        $("li[name='"+dom.name+"']").addClass("am-active");
+                        $("form[name='"+dom.name+"']").show();
+                    }else {
+                        $("li[name='"+name+"']").removeClass("am-active");
+                        $("form[name='"+name+"']").hide();
+                    }                
+                });
+            }
         });
             $('#doc-form-file').on('change', function() {
       var fileNames = '';

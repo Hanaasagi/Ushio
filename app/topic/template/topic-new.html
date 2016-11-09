@@ -77,7 +77,15 @@
     $(function(){
         $("#publish").click(function(){
             title = $('#title').val();
+            if(title == ''){
+                alert('标题不能为空');
+                return ;
+            }
             content = editor.codemirror.getValue();
+            if(content == ''){
+                alert('内容不能为空');
+                return ;
+            }
             node = $('#node option:selected').val();
             zone = $('input[type="radio"]:checked').val();
             $.post("/topics/new",{"title":title,

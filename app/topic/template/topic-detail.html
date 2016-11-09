@@ -35,10 +35,12 @@
                 {{ topic['content'] }}
             </div>
         </article>
+        {% if current_user['_id'] != topic['author_id'] %}
         <hr>
         <div>
         觉得我的帖子不错，不妨收藏一下 <button type="button" id="favorite" class="am-btn am-round am-btn-xs am-btn-secondary">收藏</button>
         </div>
+        {% end %}
         <br>
         <form class="am-form">
             <fieldset>
@@ -126,12 +128,17 @@
 <!-- end 图片 -->
 {% end %}
 {% block js %}
+<script src="{{ static_url("HyperDown/Parser.js") }}"></script>
 <script type="text/javascript">
     function getCookie(name) {
         var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
         return r ? r[1] : undefined;
     }
     $(function(){
+        // var parser = new HyperDown;
+        // html = parser.makeHtml("{{ topic['content'] }}");
+        // $("#content").html(html);
+
         $("#publish").click(function(){
             content = $('#comment').val();
             $.post("/comments/new",{"tid":"{{topic['_id']}}",
@@ -148,6 +155,8 @@
                     }
             });
         });
+
+
         $("#favorite").click(function(){
             $.post("/favorite",{"tid":"{{topic['_id']}}","_xsrf":getCookie("_xsrf")},
                 function(response){
