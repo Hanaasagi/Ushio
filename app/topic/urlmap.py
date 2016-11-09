@@ -10,5 +10,5 @@ urlpattern = (
     (r'/node/(\w+)', NodeHandler),
     (r'/topics/(\w+)', TopicHandler),
     (r'/topics/update/(\w+)', TopicUpdateHandler),
-    (r'/topics/like/(\w+)', TopicLikeHandler),
+    (r'/favorite', TopicLikeHandler),
 )
