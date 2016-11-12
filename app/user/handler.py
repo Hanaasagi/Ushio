@@ -1,4 +1,5 @@
 # -*-coding:UTF-8-*-
+import os
 import tornado.web
 import tornado.gen
 from hashlib import md5
@@ -51,7 +52,6 @@ class UpdateHandler(BaseHandler):
             'password': 0
         })
         model = UserModel()
-        print user
         self.render('user/template/user-update.html', userinfo=user,
                     label_map=model.get_label())
 
@@ -70,12 +70,21 @@ class UpdateHandler(BaseHandler):
         info['address'] = self.get_body_argument('address', '')
         info['qq'] = self.get_body_argument('qq', '')
         info['website'] = self.get_body_argument('website', '')
+
         model = UserModel()
         if not model(info):
             print model.error_msg
             self.custom_error(model.error_msg)
         else:
             profile.update(info)
+
+        file_metas = self.request.files['avatar']
+        for meta in file_metas:
+            ext = meta['filename'].split('.')[-1]
+            filename = '{0}.{1}'.format(self.current_user['_id'], ext)
+            filepath = os.path.join(self.upload_path, filename)
+            with open(filepath, 'wb') as f:
+                f.write(meta['body'])
 
         password = self.get_body_argument('password', '')
         if password:
@@ -100,7 +109,7 @@ class UpdateHandler(BaseHandler):
         }, {
             '$set': profile
         })
-        print profile
+
         self.redirect('/user/update')
 
 

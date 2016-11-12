@@ -3,6 +3,7 @@ import time
 import tornado.web
 import tornado.gen
 import json
+import markdown
 from bson import ObjectId
 from app.topic.model import TopicModel
 from ushio._base import BaseHandler
@@ -68,7 +69,6 @@ class TopicNewHandler(BaseHandler):
             rtn['success'] = 0
             rtn['msg'] = '余额不足'
             # self.custom_error('余额不足')
-
         topic = {
             'title': title,
             'content': content,
@@ -124,8 +124,13 @@ class NodeHandler(BaseHandler):
             结点页面
         '''
         limit = 20
-        page = int(self.get_query_argument('p', 0))
-        topics = yield self.db.topic.find().limit(limit).skip((page - 1) * limit)
+        page = int(self.get_query_argument('p', 1))
+        cursor = self.db.topic.find({
+            'node': node
+        })
+        cursor.sort([('top', -1), ('lastcomment', -1), ('time', -1)]
+                    ).limit(limit).skip((page - 1) * limit)
+        topics = yield cursor.to_list(length=limit)
         self.render('topic/template/node.html', topics=topics)
 
 
@@ -149,6 +154,9 @@ class TopicHandler(BaseHandler):
             self.custom_error()
         ismine = False
         current_user = self.current_user
+
+        topic['content'] = markdown.markdown(topic['content'])
+
         if current_user and topic['author_id'] == current_user['_id']:
             ismine = True
         self.render('topic/template/topic-detail.html',

@@ -24,7 +24,7 @@
                     {% for topic in topics %}
                     <tr class="row">
                         <td width="6%" class="am-hide-sm-down">
-                            <img class="am-img-thumbnail am-circle" src="{{ static_url("img/avstar/avstar3.png")}}" width="40" height="40"/>
+                            <img class="am-img-thumbnail am-circle" src="{{ static_url("img/avatar/"+topic['author_id']+".png")}}" width="40" height="40"/>
                         </td>
                         <td>
                             <span class="item-title">
@@ -34,7 +34,7 @@
                             </span>
                             <br>
                            <span>
-                                <a class="am-badge am-round" href="/go/apple">{{ topic['node'] }}</a> &nbsp;•&nbsp;
+                                <a class="am-badge am-round" href="/node/{{ topic['node'] }}">{{ topic['node'] }}</a> &nbsp;•&nbsp;
                                 {% if topic['comment'] %}
                                 <strong><a href="/user/{{ topic['author'] }}">{{ topic['author'] }}</a></strong><div class="am-hide-sm-down"> &nbsp;•&nbsp; 最后由 <strong><a href="/user/{{ topic['comment'][-1]['username'] }}">{{ topic['comment'][-1]['username'] }}</a></strong> 回复于 {% module TimeSpan(topic['comment'][-1]['time']) %}</div>
                                 {% else %}

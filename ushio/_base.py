@@ -12,6 +12,7 @@ class BaseHandler(SessionBaseHandler):
 
     def initialize(self):
         self.db = self.settings['connection']
+        self.upload_path = self.settings['upload_path']
         self.backend = self.settings.get('thread_pool')
         self.cache = cache(self)
 

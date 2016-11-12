@@ -54,6 +54,7 @@ setting = {
         'db': 'ushio',
     },
     'thread_pool': futures.ThreadPoolExecutor(4),
+    'upload_path': os.path.join(os.path.dirname(__file__), 'static/img/avatar/'),
 }
 
 custom_setting = {}

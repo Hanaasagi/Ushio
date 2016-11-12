@@ -1,3 +1,4 @@
+{% autoescape None %}
 {% extends "../../base/template/base.html" %}
 {% block title %}{{ topic['title'] }}{% end %}
 {% block body %}
@@ -7,7 +8,7 @@
             <table class="am-table am-text-sm am-scrollable-horizontal">
                 <tr class="row">
                     <td width="60">
-                        <img class="am-img-thumbnail am-circle" src="{{ static_url("img/avstar/avstar3.png")}}" width="50" height="50"/>
+                        <img class="am-img-thumbnail am-circle" src="{{ static_url("img/avatar/"+topic['author_id']+".png")}}" width="50" height="50"/>
                     </td>
                     <td>
                         <span class="item-title">
@@ -47,7 +48,7 @@
                 <table class="am-table am-text-sm am-scrollable-horizontal">
                     <tr class="row">
                         <td width="60">
-                            <img class="am-img-thumbnail am-circle" src="{{ static_url("img/avstar/avstar3.png")}}" width="50" height="50"/>
+                            <img class="am-img-thumbnail am-circle" src="{{ static_url("img/avatar/"+topic['author_id']+".png")}}" width="50" height="50"/>
                         </td>
                         <td>
                             <div class="am-form-group">
@@ -68,7 +69,7 @@
             {% for comment in topic['comment'] %}
             <li class="am-comment">
                 <a href="/user/{{ comment['username'] }}">
-                    <img class="am-comment-avatar" src="{{ static_url("img/avstar/" + comment['_id'] + ".png")}} alt=""/>
+                    <img class="am-comment-avatar" src="{{ static_url("img/avatar/" + comment['_id'] + ".png")}} alt=""/>
                 </a>
                 <div class="am-comment-main">
                     <header class="am-comment-hd">
@@ -135,9 +136,6 @@
         return r ? r[1] : undefined;
     }
     $(function(){
-        // var parser = new HyperDown;
-        // html = parser.makeHtml("{{ topic['content'] }}");
-        // $("#content").html(html);
 
         $("#publish").click(function(){
             content = $('#comment').val();
