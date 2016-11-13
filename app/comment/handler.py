@@ -18,6 +18,7 @@ class CommentNewHandler(BaseHandler):
 
     @tornado.web.asynchronous
     @tornado.gen.coroutine
+    @tornado.web.authenticated
     def post(self):
         tid = self.get_body_argument('tid', None)
         content = self.get_body_argument('content', None)
@@ -38,7 +39,20 @@ class CommentNewHandler(BaseHandler):
                     'lastcomment': time.time()
                 }
             })
-            if rtn:
+            # comment @
+            rtn2 = True
+            to_id = self.get_body_argument('to', '')
+            title = self.get_body_argument('title', '')
+            if to_id:
+                message = {
+                    'from_id': self.current_user['_id'],
+                    'from_name': self.current_user['username'],
+                    'to_id': ObjectId(to_id),
+                    'title': title,
+                }
+                rtn2 = self.db.message.insert(message)
+
+            if rtn and rtn2:
                 self.write('{"success":true}')
                 self.finish()
 

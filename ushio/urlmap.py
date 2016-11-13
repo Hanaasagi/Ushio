@@ -6,6 +6,7 @@ import app.admin.urlmap
 import app.captcha.urlmap
 import app.comment.urlmap
 import app.search.urlmap
+import app.message.urlmap
 
 urlpattern = ()
 
@@ -16,3 +17,4 @@ urlpattern += app.admin.urlmap.urlpattern
 urlpattern += app.captcha.urlmap.urlpattern
 urlpattern += app.comment.urlmap.urlpattern
 urlpattern += app.search.urlmap.urlpattern
+urlpattern += app.message.urlmap.urlpattern

@@ -3,6 +3,7 @@ import time
 import tornado.web
 import tornado.gen
 import json
+import cgi
 import markdown
 from bson import ObjectId
 from app.topic.model import TopicModel
@@ -69,6 +70,7 @@ class TopicNewHandler(BaseHandler):
             rtn['success'] = 0
             rtn['msg'] = '余额不足'
             # self.custom_error('余额不足')
+        content = cgi.escape(content)
         topic = {
             'title': title,
             'content': content,

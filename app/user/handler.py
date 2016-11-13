@@ -20,7 +20,6 @@ class ProfileHandler(BaseHandler):
         user = yield self.db.user.find_one({
             'username': username
         }, {
-            '_id': 0,
             'password': 0,
             'loginip': 0,
             'logintime': 0
