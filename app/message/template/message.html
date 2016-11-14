@@ -13,43 +13,79 @@
 </style>
 {% end %}
 {% block body%}
-<!-- content -->
 <div class="am-container" style="max-width: 1200px;">
     <div class="am-u-md-9 am-u-sm-centered">
-            <div class="am-panel am-panel-default">
-                <table class="am-table am-text-sm am-table-striped am-scrollable-horizontal">
-                    {% for message in messages %}
-                    <tr class="row">
-                        <td width="6%" class="am-hide-sm-down">
-                            <img class="am-img-thumbnail am-circle" src="{{ static_url("img/avatar/"+message['author_id']+".png")}}" width="40" height="40"/>
-                        </td>
-                        <td>
-                            <span class="item-title">
-                                <a href="/messages/{{ message['_id'] }}" >
-                                    {{ message['title'] }}
-                                </a>
-                            </span>
-                            <br>
-                           <span>
-                                <a class="am-badge am-round" href="/node/{{ message['node'] }}">{{ message['node'] }}</a> &nbsp;•&nbsp;
-                                {% if message['comment'] %}
-                                <strong><a href="/user/{{ message['author'] }}">{{ message['author'] }}</a></strong><div class="am-hide-sm-down"> &nbsp;•&nbsp; 最后由 <strong><a href="/user/{{ message['comment'][-1]['username'] }}">{{ message['comment'][-1]['username'] }}</a></strong> 回复于 {% module TimeSpan(message['comment'][-1]['time']) %}</div>
-                                {% else %}
-                                目前还没有人回复
-                                {% end %}
-                            </span>
-                        </td>
-                        <td  style="vertical-align:middle;">
-                           <span class="am-badge am-round">{{len(message['comment'])}}</span>
-                        </td>
-                    </tr>
-                    {% end %}
-                </table>
-                <div class="am-panel-footer">
-                    <ul class="am-pagination am-fr admin-content-pagination"></ul>
-                    <div class="am-cf"></div>
-                </div>
+        {% if messages %}
+        <div class="am-panel am-panel-default">
+            <div class="am-fr">
+                <a href="" name="read"><small>标记为已读</small></a>&nbsp;&nbsp;<a href="" name="del"><small>删除</small></a>&nbsp;
+            </div>
+            <table class="am-table am-text-sm am-scrollable-horizontal">
+                {% for message in messages %}
+                <tr class="row {{['am-active','am-disabled'][message['read']]}}">
+                    <td>
+                        <span>
+                        <a href="/user/{{ message['from_name'] }}">{{ message['from_name'] }}</a> &nbsp; 在帖子 <a href="/topics/{{ message['tid'] }}">{{ message['title'] }}</a> 中回复了你
+                        </span>
+                    </td>
+                    <td>
+                        <input name="checkbox" type="checkbox" value="{{ message['_id'] }}">
+                    </td>
+                </tr>
+                {% end %}
+            </table>
         </div>
+        {% else %}
+        您还没有收到任何消息
+        {% end %}
     </div>
 </div>
+{% end %}
+{% block js %}
+<script type="text/javascript">
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+    $(function(){
+        $("a[name='del']").click(function(){ 
+            id_list = new Array(); 
+            $("input[name='checkbox']:checkbox:checked").each(function(){
+                id_list.push($(this).val());
+            });
+            $.post("/message",{"method":"del",
+                "id_list":id_list.join("|"),
+                "_xsrf":getCookie("_xsrf")},
+                function(response){
+                    rtn = eval("(" + response + ")");
+                    if(rtn['success'] != true) {
+                        alert(rtn['msg']);
+                    } else {
+                        window.location.reload();
+                    }
+            });
+            return false;
+        });
+
+        $("a[name='read']").click(function(){ 
+            id_list = new Array(); 
+            $("input[name='checkbox']:checkbox:checked").each(function(){
+                id_list.push($(this).val());
+            });
+            $.post("/message",{"method":"read",
+                "id_list":id_list.join("|"),
+                "_xsrf":getCookie("_xsrf")},
+                function(response){
+                    rtn = eval("(" + response + ")");
+                    if(rtn['success'] != true) {
+                        alert(rtn['msg']);
+                    } else {
+                        window.location.reload();
+                    }
+            });
+            return false;
+        });
+
+    }); 
+</script>
 {% end %}
