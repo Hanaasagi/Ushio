@@ -51,6 +51,7 @@
             <div class="am-dropdown" data-am-dropdown="{boundary: '.am-topbar'}">
                 <button class="am-btn am-topbar-btn am-btn-sm am-dropdown-toggle" data-am-dropdown-toggle>{{ current_user['username'] }} <span class="am-icon-caret-down"></span></button>
                 <ul class="am-dropdown-content">
+                    <li><a href="/user/{{ current_user['username'] }}">我的主页</a></li>
                     <li><a href="/topics/new">发帖子</a></li>
                     <li><a href="/favorite">我喜欢的</a></li>
                     <li><a href="/message">提醒</a></li>
@@ -58,6 +59,11 @@
                     <li><a href="/logout">登出</a></li>
                 </ul>
             </div>
+        </div>
+        {% end %}
+        {% if current_user['level'] == 0%}
+        <div class="am-topbar-right">
+            <a href="/ushio" class="am-btn am-topbar-btn am-btn-sm">管理</a>
         </div>
         {% end %}
         <form method="GET" action="/search" class="am-topbar-form am-topbar-left am-form-inline am-topbar-right" role="search">

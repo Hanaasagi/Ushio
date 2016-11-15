@@ -34,6 +34,7 @@ class BaseHandler(SessionBaseHandler):
             session = {
                 '_id': str(user['_id']),
                 'username': user['username'],
+                'level': user['level'],
                 'money': user['money'],
                 'login_time': time.time()
             }

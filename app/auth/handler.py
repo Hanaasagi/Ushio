@@ -88,6 +88,7 @@ class RegisterHandler(BaseHandler):
             'register_time': time.time(),
             'favorite': [],
             'email': email,
+            'level': 1,
             'qq': '',
             'website': '',
             'address': '',

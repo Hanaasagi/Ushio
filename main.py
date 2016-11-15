@@ -34,25 +34,6 @@ setting = {
     'template_path': os.path.join(os.path.abspath('.'), 'app'),
     'login_url': '/login',
     'download': './download',
-    'session': {
-        'driver': 'redis',
-        'driver_settings': {
-            'host': 'localhost',
-            'port': 6379,
-            'db': 0,
-            'password': '',
-            'max_connections': 1024,
-        },
-        'force_persistence': False,
-        'cache_driver': True,
-        'cookie_config': {
-            'httponly': True
-        }
-    },
-    'database': {
-        'address': 'mongodb://localhost:27017/',
-        'db': 'ushio',
-    },
     'thread_pool': futures.ThreadPoolExecutor(4),
     'upload_path': os.path.join(os.path.dirname(__file__), 'static/img/avatar/'),
 }
