@@ -115,7 +115,7 @@ class RegisterHandler(BaseHandler):
                 record
             )
         self.cache['user_reg'] = None
-        self.redirect('/login')
+        self.redirect('/login?next=/user/update')
 
 
 class LoginHandler(BaseHandler):

@@ -1,0 +1,153 @@
+{% extends "admin-base.html" %}
+{% block title %}分区|标签管理 - 后台管理页面{% end %}
+{% block body %}
+<div class="am-cf admin-main">
+    {% include "admin-sidebar.html" %}
+    <div class="admin-content">
+        <div class="am-cf am-padding">
+            <div class="am-fl am-cf">
+                <strong class="am-text-primary am-text-lg">首页</strong> / <small>分区 | 标签管理</small>
+            </div>
+        </div>
+        <div class="am-g">
+            <div class="am-u-sm-12">
+                <table class="am-table am-table-bd am-table-striped admin-content-table">
+                    <thead>
+                        <tr>
+                            <th>分区名称</th>
+                            <th>帖子数量</th>
+                            <th>描述</th>
+                            <th>管理</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for zone in zones %}
+                    <tr>
+                        <td>{{ zone['name'] }}</td>
+                        <td><span class="am-badge am-badge-success">{{ zone['nums'] }}</span></td>
+                        <td>{{ zone['description'] }}</td>
+                        <td>
+                            <a class="am-btn am-btn-default am-btn-xs" href="/manage/zonedetail/{{ zone['_id'] }}">查看详情</a>
+                        </td>
+                    </tr>
+                    {% end %}
+                    </tbody>
+                </table>
+                <div class="am-input-group am-input-group-sm am-fr">
+                    <a href="/manage/newzone" class="am-btn am-btn-default am-btn-sm" name="expire">&nbsp;添加&nbsp;</a>
+                </div>
+            </div>
+            <div class="am-u-sm-12">
+                <table class="am-table am-table-bd am-table-striped admin-content-table">
+                    <thead>
+                        <tr>
+                            <th>标签名称</th>
+                            <th>帖子数量</th>
+                            <th>管理</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for tag in tags %}
+                    <tr>
+                        <td>{{ tag['name'] }}</td>
+                        <td><span class="am-badge am-badge-success">{{ tag['nums'] }}</span></td>
+                        <td>
+                            <a class="am-btn am-btn-default am-btn-xs" value="{{ tag['_id'] }}" name="delete" href="#">删除</a>
+                        </td>
+                    </tr>
+                    {% end %}
+                    </tbody>
+                </table>
+                <div class="am-input-group am-input-group-sm am-fr">
+                    <a href="#" class="am-btn am-btn-default am-btn-sm" name="newTag">&nbsp;添加&nbsp;</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<a class="am-icon-btn am-icon-th-list am-show-sm-only admin-menu" data-am-offcanvas="{target: '#admin-offcanvas'}"></a>
+
+<!-- confirm -->
+<div class="am-modal am-modal-confirm" tabindex="-1" id="my-confirm">
+    <div class="am-modal-dialog">
+        <div class="am-modal-bd">
+            确定要删除这个标签吗？(并不会删除已有文章关联)
+        </div>
+        <div class="am-modal-footer">
+            <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+            <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+        </div>
+    </div>
+</div>
+
+<!-- prompt -->
+<div class="am-modal am-modal-prompt" tabindex="-1" id="message-prompt">
+    <div class="am-modal-dialog">
+        <div class="am-modal-bd">
+            新建标签
+            <input type="text" class="am-modal-prompt-input">
+        </div>
+        <div class="am-modal-footer">
+            <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+            <span class="am-modal-btn" data-am-modal-confirm>提交</span>
+        </div>
+    </div>
+</div>
+
+{% end %}
+{% block js %}
+<script type="text/javascript">
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+ 
+    $(function(){
+        $("a[name='newTag']").click(function(){ 
+            $('#message-prompt').modal({
+                relatedTarget: this,
+                onConfirm: function(e) {
+                    $.post("/ushio/tag/add",{
+                        "name":e.data,
+                        "_xsrf":getCookie("_xsrf")},
+                        function(response){
+                            rtn = eval("(" + response + ")");
+                            if(rtn['success'] == 0) {
+                                alert(rtn['msg']);
+                            }else{
+                                window.location.reload();
+                            }
+                        }
+                    );
+                }
+            });
+            return false;
+        });
+
+        $("a[name='delete']").click(function(){
+            id = $(this).attr("value");
+            $('#my-confirm').modal({
+                relatedTarget: this,
+                onConfirm: function(options) {
+                    $.post("/ushio/tag/del",{
+                        "id": id,
+                        "_xsrf":getCookie("_xsrf")},
+                        function(response){
+                            rtn = eval("(" + response + ")");
+                            if(rtn['success'] == 0) {
+                                alert(rtn['msg']);
+                            }else{
+                                window.location.reload();
+                            }
+                        }
+                    );
+                }
+              });
+            return false;
+        });
+
+    });
+</script>
+{% end %}

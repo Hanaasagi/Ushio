@@ -1,0 +1,87 @@
+{% extends "../../base/template/base.html" %}
+{% block title %}{{ userinfo['username'] }} 的主页{% end %}
+{% block css %}
+<style type="text/css">
+    a.counter {
+        color: #356dd0;
+        font-size: 32px;
+    }
+</style>
+{% end %}
+{% block body %}
+<div class="am-container" style="max-width: 1200px;">
+    <div class="am-u-md-10 am-u-sm-12 am-u-sm-center">
+        <div class="am-u-md-4">
+            <table class="am-table am-text-sm am-scrollable-horizontal">
+                <tr class="row">
+                    <td>
+                        <img class="am-img-thumbnail am-circle" src="{{ static_url("img/avatar/"+str(userinfo['_id'])+".png")}}" width="90" height="90"/>
+                    </td>
+                    <td colspan="2">
+                        <div>
+                            <strong>  {{ userinfo['username'] }}</strong>
+                        </div>
+                        <div>
+                            注册于
+                            {{ datetime.datetime.fromtimestamp(int(userinfo['register_time'])).strftime('%Y-%m-%d') }}
+                        </div>
+                        <div>
+                            xx 篇帖子
+                        </div>
+                    </td>
+                </tr>
+                <tr class="row">
+                    <td class="am-text-center">
+                        <div><a class="counter" href="/msl12/followers">0</a></div>
+                        <div>精华帖子</div>
+                    </td>
+                    <td class="am-text-center">
+                        <div><a class="counter" href="/user/{{ userinfo['username'] }}/followers">0</a></div>
+                        <div>关注者</div>
+                    </td>
+                    <td class="am-text-center">
+                        <div><a class="counter" href="/user/{{ userinfo['username'] }}/following">0</a></div>
+                        <div>正在关注</div>
+                    </td>
+                </tr>
+            </table>
+            <ul class="am-list">
+                <li><p>Email: <a href="mailto:{% raw userinfo['email'] %}">{{ userinfo['email'] }}</a></p></li>
+                <li><p>地区: {{ userinfo['address'] or '未知' }}</p></li>
+                <li><p>QQ: {{ userinfo['qq'] or '未知' }}</p></li>
+                <li><p>个人主页: {{ userinfo['website'] or '未知'}}</p></li>
+            </ul>
+        </div>
+        <div class="am-u-md-8">
+                <table class="am-table am-text-sm am-table-hover am-scrollable-horizontal">
+                    {% for topic in topics %}
+                    <tr class="row">
+                        <td width="6%" class="am-hide-sm-down">
+                            <img class="am-img-thumbnail am-circle" src="{{ static_url("img/avatar/"+topic['author_id']+".png")}}" width="40" height="40"/>
+                        </td>
+                        <td>
+                            <span class="item-title">
+                                <a href="/topics/{{ topic['_id'] }}" >
+                                    {{ topic['title'] }}
+                                </a>
+                            </span>
+                            <br>
+                            <span>
+                                <a class="am-badge am-round" href="/tag/{{ topic['tag'] }}">{{ topic['tag'] }}</a> &nbsp;•&nbsp;
+                                {% if topic['comment'] %}
+                                <strong><a href="/user/{{ topic['author'] }}">{{ topic['author'] }}</a></strong><div class="am-hide-sm-down"> &nbsp;•&nbsp; 最后由 <strong><a href="/user/{{ topic['comment'][-1]['username'] }}">{{ topic['comment'][-1]['username'] }}</a></strong> 回复于 {% module timespan(topic['comment'][-1]['time']) %}</div>
+                                {% else %}
+                                目前还没有人回复
+                                {% end %}
+                            </span>
+                        </td>
+                        <td  style="vertical-align:middle;">
+                           <span class="am-badge am-round">{{len(topic['comment'])}}</span>
+                        </td>
+                    </tr>
+                    {% end %}
+                </table>
+        </div>
+    </div>
+</div>
+{% end %}

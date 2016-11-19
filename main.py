@@ -4,7 +4,8 @@ import sys
 import yaml
 from concurrent import futures
 from ushio.urlmap import urlpattern
-from uimodule import uimodule
+from uimodule.timespan import TimeSpan
+from uimodule.pagenav import PageNav
 from motor.motor_tornado import MotorClient
 from tornado.ioloop import IOLoop
 from tornado.httpserver import HTTPServer
@@ -23,8 +24,8 @@ banner = r'''
 
 print banner
 
-setting = {
-    'ui_modules': uimodule,
+settings = {
+    'ui_modules': {'timespan': TimeSpan, 'pagenav': PageNav},
     'cookie_secret': '__TODO:_GENERATE_YOUR_OWN_RANDOM_VALUE_HERE__',
     'config_file': './setting.yaml',
     'compress_response': True,
@@ -40,12 +41,15 @@ setting = {
 
 custom_setting = {}
 try:
-    with open(setting['config_file'], 'r') as f:
+    with open(settings['config_file'], 'r') as f:
         custom_setting = yaml.load(f)
     for k, v in custom_setting.items():
-        setting[k] = v
-except:
-    print 'can not load config file'
+        if k == 'global':
+            settings.update(custom_setting[k])
+        else:
+            settings[k] = v
+except Exception, e:
+    print 'can not load config file', e
     sys.exit(0)
 
 
@@ -53,20 +57,20 @@ def run():
     define('port', default=8090, type=int, help='')
     define('debug', default=False, type=bool, help='')
     parse_command_line()
-    setting['debug'] = options.debug
-    if setting['debug']:
+    settings['debug'] = options.debug
+    if settings['debug']:
         print 'debug mode'
 
     try:
-        client = MotorClient(setting['database']['address'])
-        setting['connection'] = client[setting['database']['db']]
+        client = MotorClient(settings['database']['address'])
+        settings['connection'] = client[settings['database']['db']]
     except:
         print 'can not connect MongoDB'
         sys.exit(0)
 
     application = Application(
         handlers=urlpattern,
-        **setting
+        **settings
     )
 
     http_server = HTTPServer(application, xheaders=True)

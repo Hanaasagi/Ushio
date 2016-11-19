@@ -16,6 +16,10 @@ class BaseHandler(SessionBaseHandler):
         self.backend = self.settings.get('thread_pool')
         self.cache = cache(self)
 
+    def render(self, template_name, **kwargs):
+        super(BaseHandler, self).render(template_name,
+                                        site_base=self.settings['site'], **kwargs)
+
     def custom_error(self, *args, **kwargs):
         if not self._finished:
             status_code = kwargs.get('status_code', 200)
@@ -48,6 +52,7 @@ class BaseHandler(SessionBaseHandler):
             user = self.session.get('user_session')
             if not user and self.get_cookie('TORNADOSESSION'):
                 scookie = self.get_secure_cookie('TORNADOSESSION')
+                print scookie
                 user = json.loads(scookie)
                 if not self.set_session(user):
                     assert False

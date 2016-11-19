@@ -48,7 +48,7 @@ class MessageHandler(BaseHandler):
                 'read': 1
             }
         })
-        print id_list
+        # print id_list
         self.write('{"success":true}')
         self.finish()
 

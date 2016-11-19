@@ -1,0 +1,169 @@
+{% extends "admin-base.html" %}
+{% block title %}用户管理 - 后台管理页面{% end %}
+
+{% block body %}
+<div class="am-cf admin-main">
+    {% include "admin-sidebar.html" %}
+    <div class="admin-content">
+        <div class="am-cf am-padding">
+            <div class="am-fl am-cf">
+                <strong class="am-text-primary am-text-lg">首页</strong> / <small>用户列表</small>
+            </div>
+        </div>
+        <div class="am-g">
+            <div class="am-u-lg-offset-8 am-u-lg-4 am-u-sm-12">
+                <form method="GET">
+                    <div class="am-input-group am-input-group-sm">
+                        <input type="text" name="username" class="am-form-field" placeholder="搜索用户">
+                        <span class="am-input-group-btn">
+                            <button class="am-btn am-btn-default" type="submit">搜索</button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+            <div class="am-u-sm-12">
+                <table class="am-table am-table-bd am-table-striped admin-content-table">
+                    <thead>
+                        <tr>
+                            <th>用户名</th>
+                            <th>等级</th>
+                            <th>金币</th>
+                            <th>最近登录时间</th>
+                            <th>管理</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user['username'] }}</td>
+                            <td>{{ '管理员' if not user['level'] else 'Lv. '+ str(user['level'])}}</td>
+                            <td>{{ user['money'] }}</td>
+                            <td><time>{{ datetime.datetime.fromtimestamp(int(user.get('logintime', user.get('time')))) }}</time></td>
+                            <td>
+                                <div class="am-dropdown" data-am-dropdown="">
+                                    <button class="am-btn am-btn-default am-btn-xs am-dropdown-toggle" data-am-dropdown-toggle="">
+                                        <span class="am-icon-cog"></span>
+                                        <span class="am-icon-caret-down"></span>
+                                    </button>
+                                    <ul class="am-dropdown-content">
+                                        <!-- <li><a href="/ushio/user/{{ user['_id'] }}">编辑</a></li> -->
+                                        <li><a name="message" uid="{{ user['_id'] }}" href="#">私信</a></li>
+                                        <li><a name="ban" uid="{{ user['_id'] }}" href="#">禁言</a></li>
+                                        <li><a name="delete" uid="{{ user['_id'] }}" href="#">删除</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        {% end %}
+                    </tbody>
+                </table>
+
+                {% module pagenav(url='/ushio/users/', limit=limit, now=page, total=total) %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- confirm -->
+<div class="am-modal am-modal-confirm" tabindex="-1" id="my-confirm">
+    <div class="am-modal-dialog">
+        <div class="am-modal-hd">Amaze UI</div>
+        <div class="am-modal-bd">
+            确定要删除这个用户吗？
+        </div>
+        <div class="am-modal-footer">
+            <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+            <span class="am-modal-btn" data-am-modal-confirm>确定</span>
+        </div>
+    </div>
+</div>
+<!-- prompt -->
+<div class="am-modal am-modal-prompt" tabindex="-1" id="message-prompt">
+    <div class="am-modal-dialog">
+        <div class="am-modal-bd">
+            编辑消息
+            <input type="text" class="am-modal-prompt-input">
+        </div>
+        <div class="am-modal-footer">
+            <span class="am-modal-btn" data-am-modal-cancel>取消</span>
+            <span class="am-modal-btn" data-am-modal-confirm>提交</span>
+        </div>
+    </div>
+</div>
+
+<a class="am-icon-btn am-icon-th-list am-show-sm-only admin-menu" data-am-offcanvas="{target: '#admin-offcanvas'}"></a>
+
+{% end %}
+{% block js %}
+<script type="text/javascript">
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+ 
+    $(function(){
+        // 此处代码重复过多 要改！！！
+        $("a[name='delete']").click(function(){
+            uid = $(this).attr('uid')
+            $('#my-confirm').modal({
+                relatedTarget: this,
+                onConfirm: function(options) {
+                    $.post("/ushio/users",{"action":'delete',
+                        "uid": uid,
+                        "_xsrf":getCookie("_xsrf")},
+                        function(response){
+                            rtn = eval("(" + response + ")");
+                            if(rtn['success'] == 0) {
+                                alert(rtn['msg']);
+                            }else{
+                                window.location.reload();
+                            }
+                        }
+                    );
+                }
+              });
+            return false;
+        });
+
+        $("a[name='message']").click(function(){ 
+            uid = $(this).attr('uid')
+            $('#message-prompt').modal({
+                relatedTarget: this,
+                onConfirm: function(e) {
+                    $.post("/ushio/users",{"action":'message',
+                        "uid":uid,
+                        "msg":e.data,
+                        "_xsrf":getCookie("_xsrf")},
+                        function(response){
+                            rtn = eval("(" + response + ")");
+                            if(rtn['success'] == 0) {
+                                alert(rtn['msg']);
+                            }else{
+                                window.location.reload();
+                            }
+                        }
+                    );
+                }
+            });
+            return false;
+        });
+
+        $("a[name='ban']").click(function(){ 
+            uid = $(this).attr('uid')
+            $.post("/ushio/users",{"action":'ban',
+                "uid":uid,
+                "_xsrf":getCookie("_xsrf")},
+                function(response){
+                    rtn = eval("(" + response + ")");
+                    if(rtn['success'] == 0) {
+                        alert(rtn['msg']);
+                    }else{
+                        window.location.reload();
+                    }
+                }
+            );
+            return false;
+        });
+    });
+</script>
+{% end %}

@@ -1,0 +1,68 @@
+{% extends "admin-base.html" %}
+{% block title %}网站设置 - 后台管理页面{% end %}
+{% block body %}
+<div class="am-cf admin-main">
+    {% include "admin-sidebar.html" %}
+    <div class="admin-content">
+        <div class="am-cf am-padding">
+            <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">首页</strong> /
+                    <small>网站设置</small>
+            </div>
+        </div>
+        <div class="am-g">
+            <div class="am-u-sm-12 am-u-md-8">
+                <form class="am-form am-form-horizontal" method="post" action="/ushio/setting">
+                    <div class="am-form-group">
+                        <label class="am-u-sm-3 am-form-label">网站名称</label>
+                        <div class="am-u-sm-9">
+                            <input name="sitename" type="text" value="{{ site['name'] }}">
+                        </div>
+                    </div>
+                    <div class="am-form-group">
+                        <label class="am-u-sm-3 am-form-label">注册设置</label>
+                        <div class="am-u-sm-9">
+                            <select name="reg_type">
+                                    <option value="open" {% if reg_type == 'on' %}selected{% end %}>开放注册</option>
+                                    <option value="invite" {% if reg_type == 'invite' %}selected{% end %}>邀请注册</option>
+                                    <option value="close" {% if reg_type == 'close' %}selected{% end %}>关闭注册</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="am-form-group">
+                        <label class="am-u-sm-3 am-form-label">加密密钥</label>
+                        <div class="am-u-sm-9">
+                            <input name="cookie_secret" type="text" value="" placeholder="谨慎修改">
+                            <small>会影响使用cookie登陆的用户</small>
+                        </div>
+                    </div>
+                    <div class="am-form-group">
+                        <label class="am-u-sm-3 am-form-label">初始金币</label>
+                        <div class="am-u-sm-9">
+                            <input name="init_money" type="text" value="{{ init_money }}" >
+                        </div>
+                    </div>
+                    <div class="am-form-group">
+                        <label class="am-u-sm-3 am-form-label">关键词</label>
+                        <div class="am-u-sm-9">
+                            <input name="keyword" type="text" value="{{ site['keyword'] }}">
+                        </div>
+                    </div>
+                    <div class="am-form-group">
+                        <label class="am-u-sm-3 am-form-label">网站描述</label>
+                        <div class="am-u-sm-9">
+                            <textarea name="description" rows="5">{{ site['description'] }}</textarea>
+                        </div>
+                    </div>
+                    <div class="am-form-group">
+                        <div class="am-u-sm-9 am-u-sm-push-3">
+                            <button type="submit" class="am-btn am-btn-primary">保存修改</button>
+                        </div>
+                    </div>
+                    {% module xsrf_form_html() %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<a class="am-icon-btn am-icon-th-list am-show-sm-only admin-menu" data-am-offcanvas="{target: '#admin-offcanvas'}"></a>
+{% end %}

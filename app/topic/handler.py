@@ -41,7 +41,12 @@ class HomeHandler(BaseHandler):
         cursor.sort([('top', -1), ('lastcomment', -1), ('time', -1)]
                     ).limit(limit).skip((page - 1) * limit)
         topics = yield cursor.to_list(length=limit)
-        self.render('topic/template/topic.html', topics=topics)
+        cursor = self.db.tag.find()
+        cursor.sort([('nums', -1)])
+        length = yield cursor.count()
+        tags = yield cursor.to_list(length=length)
+        self.render('topic/template/topic.html',
+                    topics=topics, tags=tags, **self.settings['site'])
 
 
 class TopicNewHandler(BaseHandler):
@@ -49,19 +54,25 @@ class TopicNewHandler(BaseHandler):
     def initialize(self):
         super(TopicNewHandler, self).initialize()
 
+    @tornado.gen.coroutine
     @tornado.web.authenticated
     def get(self):
         topic = dict()
         if self.cache['topic']:
             topic = self.cache['topic']
-        self.render('topic/template/topic-new.html', topic=topic)
+        cursor = self.db.tag.find()
+        length = yield cursor.count()
+        tags = yield cursor.to_list(length=length)
+        self.render('topic/template/topic-new.html',
+                    topic=topic, tags=tags)
 
     @tornado.web.asynchronous
     @tornado.gen.coroutine
+    @tornado.web.authenticated
     def post(self):
         title = self.get_body_argument('title', '')
         content = self.get_body_argument('content', '')
-        node = self.get_body_argument('node', '')
+        tag = self.get_body_argument('tag', '')
         zone = self.get_body_argument('zone', '')
         rtn = {'success': 1, 'tid': 0, 'msg': ''}
         if not self.current_user:
@@ -78,7 +89,8 @@ class TopicNewHandler(BaseHandler):
             'author': self.current_user['username'],
             'view': 0,
             'like': 0,
-            'node': node,
+            'tag': tag,
+            # 'tag': [tag],
             'zone': zone,
             'comment': [],
             'price': 0,  # 价格
@@ -114,26 +126,31 @@ class TopicNewHandler(BaseHandler):
         self.finish()
 
 
-class NodeHandler(BaseHandler):
+class TagHandler(BaseHandler):
 
     def initialize(self):
-        super(NodeHandler, self).initialize()
+        super(TagHandler, self).initialize()
 
     @tornado.web.asynchronous
     @tornado.gen.coroutine
-    def get(self, node):
+    def get(self, tag):
         '''
-            结点页面
+            Tag页面
         '''
         limit = 20
         page = int(self.get_query_argument('p', 1))
         cursor = self.db.topic.find({
-            'node': node
+            'tag': tag
         })
         cursor.sort([('top', -1), ('lastcomment', -1), ('time', -1)]
                     ).limit(limit).skip((page - 1) * limit)
         topics = yield cursor.to_list(length=limit)
-        self.render('topic/template/node.html', topics=topics)
+
+        cursor = self.db.tag.find()
+        cursor.sort([('nums', -1)])
+        length = yield cursor.count()
+        tags = yield cursor.to_list(length=length)
+        self.render('topic/template/tag.html', topics=topics, tags=tags)
 
 
 class TopicHandler(BaseHandler):
@@ -154,15 +171,18 @@ class TopicHandler(BaseHandler):
         })
         if topic is None:
             self.custom_error()
-        ismine = False
+        isfavorite = False
         current_user = self.current_user
 
         topic['content'] = markdown.markdown(topic['content'])
 
-        if current_user and topic['author_id'] == current_user['_id']:
-            ismine = True
+        user = yield self.db.user.find_one({
+            '_id': ObjectId(current_user['_id'])
+        })
+        if topic['_id'] in user['favorite']:
+            isfavorite = True
         self.render('topic/template/topic-detail.html',
-                    topic=topic, ismine=ismine)
+                    topic=topic, isfavorite=isfavorite)
 
 
 class TopicLikeHandler(BaseHandler):
@@ -172,6 +192,7 @@ class TopicLikeHandler(BaseHandler):
 
     @tornado.web.asynchronous
     @tornado.gen.coroutine
+    @tornado.web.authenticated
     def post(self):
         tid = self.get_body_argument('tid', '')
         uid = self.current_user.get('_id', '')

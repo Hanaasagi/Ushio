@@ -1,0 +1,26 @@
+{% extends "admin-base.html" %}
+{% block title %}私信 - 后台管理页面{% end %}
+{% block body %}
+<div class="am-cf admin-main">
+    {% include "admin-sidebar.html" %}
+    <div class="admin-content">
+        <div class="am-cf am-padding">
+            <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">提示页面</strong> / <small>{{ error_title }}</small></div>
+        </div>
+
+        <div class="am-g">
+            <div class="am-u-sm-12 am-u-md-8">
+                    <div class="am-form-group">
+                        <label class="am-u-sm-3 am-form-label">个人说明</label>
+                        <div class="am-u-sm-9">
+                            <textarea name="signal" rows="5">{{ user.get('signal') }}</textarea>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<a class="am-icon-btn am-icon-th-list am-show-sm-only admin-menu" data-am-offcanvas="{target: '#admin-offcanvas'}"></a>
+
+{% end %}

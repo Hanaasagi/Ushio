@@ -10,46 +10,65 @@
 {% end %}
 {% block body %}
 <div class="am-container" style="max-width: 1200px;">
-    <div class="am-u-md-10 am-u-sm-12 am-u-sm-center">
-        <div class="am-u-md-4">
-            <table class="am-table am-text-sm am-scrollable-horizontal">
-                <tr class="row">
-                    <td>
-                        <img class="am-img-thumbnail am-circle" src="{{ static_url("img/avatar/"+str(userinfo['_id'])+".png")}}" width="90" height="90"/>
-                    </td>
-                    <td colspan="2">
-                        <div>
-                            <strong>  {{ userinfo['username'] }}</strong>
-                        </div>
-                        <div>
-                            注册于
-                            {{ userinfo['register_time'] }}
-                        </div>
-                        <div>
-                            xx 篇帖子
-                        </div>
-                    </td>
-                </tr>
-                <tr class="row">
-                    <td class="am-text-center">
-                        <div><a class="counter" href="/msl12/followers">3</a></div>
-                        <div>精华帖子</div>
-                    </td>
-                    <td class="am-text-center">
-                        <div><a class="counter" href="/user/{{ userinfo['username'] }}/followers">3</a></div>
-                        <div>关注者</div>
-                    </td>
-                    <td class="am-text-center">
-                        <div><a class="counter" href="/user/{{ userinfo['username'] }}/following">3</a></div>
-                        <div>正在关注</div>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div class="am-u-md-5">
-        465
-        </div>
+    <div class="am-u-sm-12 am-u-md-4">
+        <table class="am-table am-text-sm am-scrollable-horizontal">
+            <tr class="row">
+                <td>
+                    <img class="am-img-thumbnail am-circle" src="{{ static_url("img/avatar/"+str(userinfo['_id'])+".png")}}" width="90" height="90"/>
+                </td>
+                <td colspan="2">
+                    <div>
+                        <strong>  {{ userinfo['username'] }}</strong>
+                    </div>
+                    <div>
+                        注册于
+                        {{ datetime.datetime.fromtimestamp(int(userinfo['register_time'])).strftime('%Y-%m-%d') }}
+                    </div>
+                    <div>
+                        {{ len(topics) }} 篇帖子
+                    </div>
+                </td>
+            </tr>
+            <tr class="row">
+                <td class="am-text-center">
+                    <div><a class="counter" href="/msl12/followers">0</a></div>
+                    <div>精华帖子</div>
+                </td>
+                <td class="am-text-center">
+                    <div><a class="counter" href="/user/{{ userinfo['username'] }}/followers">0</a></div>
+                    <div>关注者</div>
+                </td>
+                <td class="am-text-center">
+                    <div><a class="counter" href="/user/{{ userinfo['username'] }}/following">0</a></div>
+                    <div>正在关注</div>
+                </td>
+            </tr>
+        </table>
+        <ul class="am-list">
+            <li><p>Email: <a href="mailto:{% raw userinfo['email'] %}">{{ userinfo['email'] }}</a></p></li>
+            <li><p>地区: {{ userinfo['address'] or '未知' }}</p></li>
+            <li><p>QQ: {{ userinfo['qq'] or '未知' }}</p></li>
+            <li><p>个人主页: {{ userinfo['website'] or '未知'}}</p></li>
+        </ul>
+    </div>
+    <div class="am-u-sm-12 am-u-md-8">
+        <p class="">最近发布的帖子</p>
+        <table class="am-table am-text-sm am-scrollable-horizontal">
+            {% for topic in topics %}
+            <tr class="row">
+                <td>
+                    <span>
+                        <a class="am-badge am-round" href="/tag/{{ topic['tag'] }}">{{ topic['tag'] }}</a>&nbsp;
+                        <a href="/topics/{{ topic['_id'] }}" >{{ topic['title'] }}</a>&nbsp;&nbsp;
+                        <time><em>{{ datetime.datetime.fromtimestamp(topic['time']).strftime('%Y-%m-%d') }}</time></em>
+                    </span>
+                </td>
+                <td  style="vertical-align:middle;">
+                   <span class="am-badge am-round">{{len(topic['comment'])}}</span>
+                </td>
+            </tr>
+            {% end %}
+        </table>
     </div>
 </div>
-
 {% end %}

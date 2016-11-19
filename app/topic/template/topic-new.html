@@ -42,14 +42,10 @@
             <div class="am-form-group">
                 <label for="doc-select-1">节点</label>
                 <div>
-                    <select id="node" data-am-selected="{searchBox: 1}">
-                        <option value="a">我的妹妹不可能那么可爱</option>
-                        <option value="b">Banana</option>
-                        <option value="o">Orange</option>
-                        <option value="m">Mango</option>
-                        <option value="phone">iPhone</option>
-                        <option value="im">iMac</option>
-                        <option value="mbp">Macbook Pro</option>
+                    <select id="tag" data-am-selected="{searchBox: 1}">
+                        {% for tag in tags %}
+                        <option value="{{ tag['name'] }}">{{ tag['name'] }}</option>
+                        {% end %}
                     </select>
                 </div>
             </div>
@@ -86,11 +82,11 @@
                 alert('内容不能为空');
                 return ;
             }
-            node = $('#node option:selected').val();
+            tag = $('#tag option:selected').val();
             zone = $('input[type="radio"]:checked').val();
             $.post("/topics/new",{"title":title,
                 "content":content,
-                "node":node,
+                "tag":tag,
                 "zone":zone,
                 "_xsrf":getCookie("_xsrf")},
                 function(response){

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Ushio{% end %}</title>
+    <title>{% block title %} {{site_base['name']}} {% end %}</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
@@ -13,12 +13,16 @@
     {% block css %}{% end %}
 </head>
 <body>
+<!--[if lte IE 9]>
+<p class="browsehappy">你正在使用<strong>过时</strong>的浏览器，Amaze UI 暂不支持。 请 <a href="http://browsehappy.com/" target="_blank">升级浏览器</a>
+  以获得更好的体验！</p>
+<![endif]-->
 {%block header%}
  <!-- top bar -->
 <header class="am-topbar am-topbar-fixed-top">
 <div class="am-container" style="max-width: 1200px;">
     <h1 class="am-topbar-brand">
-        <a href="#"> Ushio </a>
+        <a href="#"> {{site_base['name']}} </a>
     </h1>
     <button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-success am-show-sm-only" data-am-collapse="{target: '#doc-topbar-collapse'}">
         <span class="am-sr-only">导航切换</span>
@@ -54,17 +58,17 @@
                     <li><a href="/user/{{ current_user['username'] }}">我的主页</a></li>
                     <li><a href="/topics/new">发帖子</a></li>
                     <li><a href="/favorite">我喜欢的</a></li>
-                    <li><a href="/message">提醒</a></li>
+                    <li><a href="/message">提醒<span class="am-badge am-radius am-badge-warning">5</span></a></li>
                     <li><a href="/user/update">设置</a></li>
                     <li><a href="/logout">登出</a></li>
                 </ul>
             </div>
         </div>
-        {% end %}
         {% if current_user['level'] == 0%}
         <div class="am-topbar-right">
-            <a href="/ushio" class="am-btn am-topbar-btn am-btn-sm">管理</a>
+            <a href="/ushio/index" class="am-btn am-topbar-btn am-btn-sm">管理</a>
         </div>
+        {% end %}
         {% end %}
         <form method="GET" action="/search" class="am-topbar-form am-topbar-left am-form-inline am-topbar-right" role="search">
             <div class="am-form-group">

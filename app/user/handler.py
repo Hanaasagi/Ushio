@@ -28,11 +28,19 @@ class ProfileHandler(BaseHandler):
             self.custom_error('不存在这个用户')
         if not user['allowemail']:
             del user['allowemail']
-        if user:
-            self.render('user/template/user.html', userinfo=user,
-                        label_map=UserModel().get_label())
-        else:
+        if not user:
             self.set_status(status_code=404)
+
+        # 取出 user 的topic
+        page = int(self.get_query_argument('page', 1))
+        limit = 10
+        cursor = self.db.topic.find({
+            'author_id': str(user['_id'])
+        })
+        cursor.sort([('time', -1)]).limit(limit).skip((page - 1) * limit)
+        topics = yield cursor.to_list(length=limit)
+        self.render('user/template/user.html', userinfo=user, topics=topics,
+                    label_map=UserModel().get_label())
 
 
 class UpdateHandler(BaseHandler):

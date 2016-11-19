@@ -7,6 +7,12 @@ import yaml
 import pymongo
 from hashlib import md5
 
+zone_map = {
+    '动漫': '一些关于动漫的事情',
+    '音乐': '一些关于音乐的事情',
+    '轻小说': '一些关于轻小说的事情'
+}
+
 
 def create_admin(db, setting):
     email = raw_input('请输入可用邮箱账号: ')
@@ -37,6 +43,17 @@ def create_admin(db, setting):
     db.user.insert(user)
 
 
+def create_zone():
+
+    for name, desc in zone_map.items():
+        data = {
+            'name': name,
+            'description': desc,
+            'nums': 0
+        }
+        db.zone.insert(data)
+
+
 if __name__ == '__main__':
     try:
         with open('setting.yaml', 'r') as f:
@@ -49,5 +66,10 @@ if __name__ == '__main__':
     isdo = raw_input('是否创建管理员账户(Y/n): ')
     if isdo in ('Y', 'y'):
         create_admin(db, setting)
+    else:
+        print '什么都没做'
+    isdo = raw_input('是否初始化版块分区(Y/n): ')
+    if isdo in ('Y', 'y'):
+        create_zone()
     else:
         print '什么都没做'

@@ -1,33 +1,45 @@
-"base_url": "127.0.0.1"
-"cookie_secret": !!python/unicode "secret-key"
-"salt": !!python/unicode "7BB98050796B649E"
-"imagepath": "./static/upimg"
-"init_money": !!int "10"
-"charge": 1
-"invite_expire": !!int "604800"
-"reg_type": !!python/unicode "open"
-"intranet": !!bool "false"
-"site":
-  "description": !!python/unicode "Ushio a simple community"
-  "keyword": !!python/unicode "love and peace"
-  "webname": !!python/unicode "Ushio"
-"email":
-  "method": "none"
-  "url": "https://api.mailgun.net/v3/domain"
-  "key": "key-xxxxx"
-  "sender": "root@domain"
-"session":
-  "driver": "redis"
-  "driver_settings":
-    "host": "localhost"
-    "port": 6379
-    "db": 0
-    "password": ""
-    "max_connections": 1024
-  "force_persistence": False
-  "cache_driver": True
-  "cookie_config":
-    "httponly": True
 "database":
   "address": "mongodb://localhost:27017/"
   "db": "ushio"
+"global":
+  "base_url": "127.0.0.1"
+  "charge": !!int "1"
+  "cookie_secret": !!python/unicode "456456783245"
+  "email":
+    "key": "key-xxxxx"
+    "method": "none"
+    "sender": "root@domain"
+    "url": "https://api.mailgun.net/v3/domain"
+  "imagepath": "./static/upimg"
+  "init_money": !!int "50"
+  "intranet": !!bool "false"
+  "invite_expire": !!int "604800"
+  "reg_type": !!python/unicode "open"
+  "salt": !!python/unicode "7BB98050796B649E"
+  "site":
+    "description": "\u9690\u7EA6\u96F7\u9E23 \u9634\u973E\u5929\u7A7A \u4F46\u76FC\
+      \u98CE\u96E8\u6765 \u80FD\u7559\u4F60\u5728\u6B64\r\n\u9690\u7EA6\u96F7\u9E23\
+      \ \u9634\u973E\u5929\u7A7A \u5373\u4F7F\u5929\u65E0\u96E8 \u6211\u4EA6\u7559\
+      \u6B64\u5730"
+    "keyword": !!python/unicode "love && peace"
+    "name": !!python/unicode "Ushio"
+"redis":
+  "driver_settings":
+    "db": !!int "0"
+    "host": "localhost"
+    "max_connections": !!int "1024"
+    "password": ""
+    "port": !!int "6379"
+  "force_persistence": !!bool "false"
+"session":
+  "cache_driver": !!bool "true"
+  "cookie_config":
+    "httponly": !!bool "true"
+  "driver": "redis"
+  "driver_settings":
+    "db": !!int "0"
+    "host": "localhost"
+    "max_connections": !!int "1024"
+    "password": ""
+    "port": !!int "6379"
+  "force_persistence": !!bool "false"

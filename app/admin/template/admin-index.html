@@ -1,0 +1,29 @@
+{% extends "admin-base.html" %}
+{% block title %}后台管理页面{% end %}
+{% block body %}
+<div class="am-cf admin-main">
+    {% include "admin-sidebar.html" %}
+    <!-- content start -->
+    <div class="admin-content">
+        <div class="am-cf am-padding">
+            <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">首页</strong> / <small>数据统计</small></div>
+        </div>
+        <ul class="am-avg-sm-1 am-avg-md-4 am-margin am-padding am-text-center admin-content-list ">
+            <li>
+                <a href="/ushio/topic" class="am-text-success"><span class="am-icon-btn am-icon-file-text"></span><br/>帖子数量<br/>1</a>
+            </li>
+            <li>
+                <a href="/ushio/zone" class="am-text-warning"><span class="am-icon-btn am-icon-puzzle-piece"></span><br/>分区数量<br/>2</a>
+            </li>
+            <li>
+                <a href="/ushio/node" class="am-text-danger"><span class="am-icon-btn am-icon-tags"></span><br/>节点数量<br/>3</a>
+            </li>
+            <li>
+                <a href="/manage/user" class="am-text-secondary"><span class="am-icon-btn am-icon-users"></span><br/>用户总数<br/>4</a>
+            </li>
+        </ul>
+    </div>
+    <!-- content end -->
+</div>
+<a class="am-icon-btn am-icon-th-list am-show-sm-only admin-menu" data-am-offcanvas="{target: '#admin-offcanvas'}"></a>
+{% end %}

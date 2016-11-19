@@ -1,0 +1,23 @@
+{% extends "../../base/template/base.html" %}
+{% block css %}
+<link rel="stylesheet" href="{{ static_url("assets/css/admin.css") }}">
+{% end %}
+{% block admin_css %}
+{% end %}
+{% block header %}
+<header class="am-topbar admin-header">
+    <div class="am-topbar-brand">
+        <strong>Ushio</strong> <small>后台管理</small>
+    </div>
+    <div class="am-collapse am-topbar-collapse" id="topbar-collapse">
+        <ul class="am-nav am-nav-pills am-topbar-nav am-topbar-right admin-header-list">
+            <li>
+                <a href="/"> 返回首页 </a>
+            </li>
+            <li>
+                <a href="javascript:;"><span class="am-icon-envelope-o"></span> 收件箱 <span class="am-badge am-badge-warning">5</span></a>
+            </li>
+        </ul>
+    </div>
+</header>
+{% end %}
