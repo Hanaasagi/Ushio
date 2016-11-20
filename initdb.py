@@ -65,7 +65,7 @@ if __name__ == '__main__':
     db = client[setting['database']['db']]
     isdo = raw_input('是否创建管理员账户(Y/n): ')
     if isdo in ('Y', 'y'):
-        create_admin(db, setting)
+        create_admin(db, setting['global'])
     else:
         print '什么都没做'
     isdo = raw_input('是否初始化版块分区(Y/n): ')

@@ -1,12 +1,13 @@
 # -*-coding:UTF-8-*-
 import time
 import json
+import uuid
 import tornado.web
 import tornado.gen
 from hashlib import md5
 from util.captcha import Captcha
 from util.util import Cipher
-from util.email import Email
+from util.mailgun import Email
 from ushio._base import BaseHandler
 from tornado.escape import url_escape
 
@@ -34,9 +35,28 @@ class RegisterHandler(BaseHandler):
         '''
         if self.get_current_user():
             self.redirect('/')
-        error = self.get_argument('error', '')
-        error_msg = self.error_map.get(error, '')
-        self.render('auth/template/register.html', error=error_msg)
+        token = self.get_query_argument('token', None)
+
+        if not token:
+            error = self.get_query_argument('error', '')
+            error_msg = self.error_map.get(error, '')
+            self.render('auth/template/register.html', error=error_msg)
+
+        else:
+            #
+            # 若 url 中存在 + %2B 则会获得空格 ??
+            #
+            token = token.replace(' ', '+')
+            msg = Cipher(self.settings['cookie_secret']).decrypt(token)
+            if self.cache['token'] == msg:
+                user = self.cache['user_info']
+                result = self.db.user.insert(user)
+                if not result:
+                    self.send_error(status_code=500)
+                self.cache['user_reg'] = None
+                self.redirect('/login?next=/user/update')
+            else:
+                self.write('验证失败 请重新注册')
 
     @tornado.web.asynchronous
     @tornado.gen.coroutine
@@ -104,9 +124,6 @@ class RegisterHandler(BaseHandler):
         # 这里需要 model验证
         #
         #
-        result = self.db.user.insert(user)
-        if not result:
-            self.send_error(status_code=500)
         if self.settings['reg_type'] == 'invite':
             record['used'] = True
             record['user'] = username
@@ -114,8 +131,23 @@ class RegisterHandler(BaseHandler):
                 {'code': invitecode},
                 record
             )
-        self.cache['user_reg'] = None
-        self.redirect('/login?next=/user/update')
+
+        self.cache['user_info'] = user
+        msg = '{}{}'.format(uuid.uuid4(), time.time())
+        self.cache['token'] = msg
+        token = Cipher(self.settings['cookie_secret']).encrypt(msg)
+        url = '{}/register?token={}'.format(
+            self.settings['site_url'], url_escape(token)
+        )
+        Email(self.settings['email']).send(
+            to=user['email'],
+            origin='',
+            title=u'注册 - %s' % self.settings['site']['name'],
+            content=u'点击链接完成注册：<br /><a href=\"%s\">%s</a><br />如果不是您本人操作，请忽视这封邮件' % (
+                url, url)
+        )
+        self.write('我们已经发送了一封邮件到{0}，请及时确认'.format(user['email']))
+        self.finish()
 
 
 class LoginHandler(BaseHandler):
@@ -187,13 +219,13 @@ class LogoutHandler(BaseHandler):
         self.redirect('/')
 
 
-class ResetPasswordHandler(BaseHandler):
+class ForgetPasswordHandler(BaseHandler):
 
     def initialize(self):
-        super(ResetPasswordHandler, self).initialize()
+        super(ForgetPasswordHandler, self).initialize()
 
     def prepare(self):
-        super(ResetPasswordHandler, self).prepare()
+        super(ForgetPasswordHandler, self).prepare()
 
     @tornado.web.asynchronous
     @tornado.gen.coroutine
@@ -201,6 +233,7 @@ class ResetPasswordHandler(BaseHandler):
         token = self.get_argument('token', None)
         if token:
             try:
+                token = token.replace(' ', '+')
                 msg = Cipher(self.settings['cookie_secret']).decrypt(token)
             except:
                 self.send_error(status_code=500)
@@ -217,12 +250,12 @@ class ResetPasswordHandler(BaseHandler):
             })
             if user:
                 # 这里是否应该重新生成token?
-                self.render('resetPassword.html', token=token)
+                self.render('auth/template/forget-password.html', step=2, token=token)
             else:
                 self.send_error(status_code=500)
         else:
             # self.redirct ?
-            self.render('forgetPassword.html')
+            self.render('auth/template/forget-password.html', step=1)
 
     @tornado.web.asynchronous
     @tornado.gen.coroutine
@@ -233,38 +266,40 @@ class ResetPasswordHandler(BaseHandler):
         '''
         step = self.get_query_argument('step', '1')
         if step == '1':
-            email = self.get_body_argument('email', None)
-            if email:
+            username = self.get_body_argument('username', None)
+            if username:
                 captcha = self.get_body_argument('captcha', '')
                 if not Captcha.verify(captcha, self):
                     self.custom_error('验证码错误')
                 user = yield self.db.user.find_one({
-                    'email': email
+                    'username': username
                 })
                 if not user:
-                    self.custom_error('邮箱不存在')
+                    self.custom_error('用户不存在')
                 msg = '{}|{}|{}'.format(
                     user['username'], user['password'], time.time()
                 )
                 token = Cipher(self.settings['cookie_secret']).encrypt(msg)
-                url = '{}/resetPassword?token={}'.format(
+                url = '{}/forgetpassword?token={}'.format(
                     self.settings['site_url'], url_escape(token)
                 )
                 Email(self.settings['email']).send(
                     to=user['email'],
                     origin='',
-                    title=u'找回密码 - %s' % self.settings['site']['webname'],
-                    content=u'点击链接找回你的密码：<br /><a href=\"%s\">%s</a><br />如果你没有找回密码，请忽视这封邮件' % (
+                    title=u'找回密码 - %s' % self.settings['site']['name'],
+                    content=u'点击链接找回你的密码：<br /><a href=\"%s\">%s</a><br />如果不是您本人操作，请忽视这封邮件' % (
                         url, url)
                 )
-                self.render('forgetPassword.html', success=True)
+                self.write('一封重置密码的邮件已经发送到您的邮箱，请注意查收')
+                self.finish()
             else:
-                self.custom_error('require email')
+                self.custom_error('require username')
         if step == '2':
             token = self.get_body_argument('token', None)
             newpwd = self.get_body_argument('password', None)
             if token and newpwd:
                 try:
+                    token = token.replace(' ', '+')
                     msg = Cipher(self.settings['cookie_secret']).decrypt(token)
                     username, password, t = msg.split('|')
                 except:
@@ -273,12 +308,19 @@ class ResetPasswordHandler(BaseHandler):
                     error = '链接已过期，请在30分钟内点击链接找回密码'
                     self.custom_error(error)
                 hash_object = md5(newpwd + self.settings['salt'])
+                print username, password
                 user = yield self.db.user.find_and_modify({
-                    'username': username, 'password': password
+                    'username': username,
+                    'password': password
                 }, {
                     '$set': {'password': hash_object.hexdigest()}
                 })
-                if not user:
-                    self.custom_error('参数错误')
+                if user:
+                    self.redirect('/login')
                 else:
-                    self.custom_error('密码修改成功')
+                    # print '12' * 100
+                    self.custom_error('参数错误')
+            else:
+                self.custom_error('非法访问')
+        else:
+            self.custom_error()

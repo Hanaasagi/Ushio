@@ -2,14 +2,14 @@
   "address": "mongodb://localhost:27017/"
   "db": "ushio"
 "global":
-  "base_url": "127.0.0.1"
+  "site_url": "127.0.0.1"
   "charge": !!int "1"
   "cookie_secret": !!python/unicode "456456783245"
   "email":
-    "key": "key-xxxxx"
+    "key": "key-1c50c99497533bec101925fa8d8dc72b"
     "method": "none"
     "sender": "root@domain"
-    "url": "https://api.mailgun.net/v3/domain"
+    "url": "https://api.mailgun.net/v3/sandbox92952a16025a4acb97d9085e94629ccf.mailgun.org"
   "imagepath": "./static/upimg"
   "init_money": !!int "50"
   "intranet": !!bool "false"

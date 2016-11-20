@@ -236,12 +236,6 @@ class TopicLikeHandler(BaseHandler):
         }, {
             'favorite': 1
         })
-        print fav_list
-        # topics = yield self.db.topics.find({
-        #     '_id': {
-        #         '$in': fav_list['favorite']
-        #     }
-        # }).limit(limit).skip((page - 1) * limit)
 
         cursor = self.db.topic.find({
             '_id': {

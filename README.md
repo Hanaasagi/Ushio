@@ -2,7 +2,6 @@
 
 Ushio 是一个基于 tornado 框架的社区  
 
-
 ###Requirements  
 
 	MongoDB >= 3.2

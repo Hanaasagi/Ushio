@@ -13,7 +13,7 @@ class cache(dict):
             value = self.request.session.get(item)
             self.request.session.delete(item)
         else:
-            value = ''
+            value = None
         return value
 
     def get(self, k, d=None):
