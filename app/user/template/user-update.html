@@ -44,6 +44,9 @@
                     <input type="text" name="website" class="" value="{{ userinfo['website'] }}" placeholder="未填写">
                 </div>
                 <div class="am-form-group">
+                    <input type="hidden" name="update" value="profile">
+                </div>
+                <div class="am-form-group">
                     <input type="submit" class="am-btn am-btn-primary" value="保存">
                 </div>
             </fieldset>
@@ -62,6 +65,9 @@
                 <div class="am-form-group">
                     <label for="doc-ipt-pwd-1">确认密码</label>
                     <input type="password" name="re_password" class="" id="doc-ipt-pwd-1" placeholder="">
+                </div>
+                <div class="am-form-group">
+                    <input type="hidden" name="update" value="password">
                 </div>
                 <div class="am-form-group">
                     <p><input type="submit" class="am-btn am-btn-primary am-btn-sm" name="delete" value="确认"></p>
@@ -133,6 +139,9 @@
                            拒绝
                         </label>
                     </div>
+                </div>
+                <div class="am-form-group">
+                    <input type="hidden" name="update" value="private">
                 </div>
                 <br>
                 <div class="am-form-group">

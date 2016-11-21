@@ -176,11 +176,13 @@ class TopicHandler(BaseHandler):
 
         topic['content'] = markdown.markdown(topic['content'])
 
-        user = yield self.db.user.find_one({
-            '_id': ObjectId(current_user['_id'])
-        })
-        if topic['_id'] in user['favorite']:
-            isfavorite = True
+        isfavorite = False
+        if current_user:
+            user = yield self.db.user.find_one({
+                '_id': ObjectId(current_user['_id'])
+            })
+            if topic['_id'] in user['favorite']:
+                isfavorite = True
         self.render('topic/template/topic-detail.html',
                     topic=topic, isfavorite=isfavorite)
 

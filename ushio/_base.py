@@ -33,18 +33,18 @@ class BaseHandler(SessionBaseHandler):
         raise tornado.web.Finish()
 
     def set_session(self, user):
-        try:
-            assert ('_id' in user and 'username' in user)
+        if '_id' in user and 'username' in user:
             session = {
                 '_id': str(user['_id']),
                 'username': user['username'],
                 'level': user['level'],
                 'money': user['money'],
+                # 'msg_num':len(user['msg'])
                 'login_time': time.time()
             }
             self.session.set('user_session', session)
             return session
-        except:
+        else:
             return None
 
     def get_current_user(self):
@@ -52,7 +52,6 @@ class BaseHandler(SessionBaseHandler):
             user = self.session.get('user_session')
             if not user and self.get_cookie('TORNADOSESSION'):
                 scookie = self.get_secure_cookie('TORNADOSESSION')
-                print scookie
                 user = json.loads(scookie)
                 if not self.set_session(user):
                     assert False

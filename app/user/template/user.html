@@ -25,14 +25,14 @@
                         {{ datetime.datetime.fromtimestamp(int(userinfo['register_time'])).strftime('%Y-%m-%d') }}
                     </div>
                     <div>
-                        {{ len(topics) }} 篇帖子
+                        所在地区: {{ userinfo['address'] or '地球' }}
                     </div>
                 </td>
             </tr>
             <tr class="row">
                 <td class="am-text-center">
                     <div><a class="counter" href="/msl12/followers">0</a></div>
-                    <div>精华帖子</div>
+                    <div>帖子</div>
                 </td>
                 <td class="am-text-center">
                     <div><a class="counter" href="/user/{{ userinfo['username'] }}/followers">0</a></div>
@@ -45,9 +45,12 @@
             </tr>
         </table>
         <ul class="am-list">
+            {% if userinfo['openemail'] %}
             <li><p>Email: <a href="mailto:{% raw userinfo['email'] %}">{{ userinfo['email'] }}</a></p></li>
-            <li><p>地区: {{ userinfo['address'] or '未知' }}</p></li>
+            {% end %}
+            {% if userinfo['openqq'] %}
             <li><p>QQ: {{ userinfo['qq'] or '未知' }}</p></li>
+            {% end %}
             <li><p>个人主页: {{ userinfo['website'] or '未知'}}</p></li>
         </ul>
     </div>

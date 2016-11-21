@@ -25,7 +25,7 @@
                 <tr class="row {{['am-active','am-disabled'][message['read']]}}">
                     <td>
                         <span>
-                        <a href="/user/{{ message['from_name'] }}">{{ message['from_name'] }}</a> &nbsp; 在帖子 <a href="/topics/{{ message['tid'] }}">{{ message['title'] }}</a> 中回复了你
+                        <a href="/user/{{ message['from_name'] }}">{{ message['from_name'] }}</a> &nbsp; 在帖子 <a name="message" value="{{ message['_id'] }}" href="/topics/{{ message['tid'] }}">{{ message['title'] }}</a> 中回复了你
                         </span>
                     </td>
                     <td>
@@ -86,6 +86,22 @@
             return false;
         });
 
+        $("a[name='message']").click(function(){ 
+            id_list = new Array(); 
+            id_list.push($(this).attr('value'));
+            $.post("/message",{"method":"read",
+                "id_list":id_list.join("|"),
+                "_xsrf":getCookie("_xsrf")},
+                function(response){
+                    rtn = eval("(" + response + ")");
+                    if(rtn['success'] != true) {
+                        alert(rtn['msg']);
+                    } else {
+                        window.location.reload();
+                    }
+            });
+            return true;
+        });
     }); 
 </script>
 {% end %}

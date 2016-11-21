@@ -68,16 +68,19 @@ class UpdateHandler(BaseHandler):
     def post(self):
         profile = {}
         info = {}
-
-        info['openqq'] = int(self.get_body_argument('openqq', 1))
-        info['openemail'] = int(self.get_body_argument('openemail', 1))
-        info['openfavorite'] = int(self.get_body_argument('openfavorite', 1))
-        info['allowemail'] = int(self.get_body_argument('allowemail', 1))
-
-        info['address'] = self.get_body_argument('address', '')
-        info['qq'] = self.get_body_argument('qq', '')
-        info['website'] = self.get_body_argument('website', '')
-
+        update = self.get_body_argument('update', None)
+        if update == 'private':
+            info['openqq'] = int(self.get_body_argument('openqq', 1))
+            info['openemail'] = int(self.get_body_argument('openemail', 1))
+            info['openfavorite'] = int(
+                self.get_body_argument('openfavorite', 1))
+            info['allowemail'] = int(self.get_body_argument('allowemail', 1))
+        elif update == 'profile':
+            info['address'] = self.get_body_argument('address', '')
+            info['qq'] = self.get_body_argument('qq', '')
+            info['website'] = self.get_body_argument('website', '')
+        else:
+            pass
         model = UserModel()
         if not model(info):
             print model.error_msg
@@ -85,13 +88,14 @@ class UpdateHandler(BaseHandler):
         else:
             profile.update(info)
 
-        file_metas = self.request.files['avatar']
-        for meta in file_metas:
-            ext = meta['filename'].split('.')[-1]
-            filename = '{0}.{1}'.format(self.current_user['_id'], ext)
-            filepath = os.path.join(self.upload_path, filename)
-            with open(filepath, 'wb') as f:
-                f.write(meta['body'])
+        file_metas = self.request.files.get('avatar', '')
+        if file_metas:
+            for meta in file_metas:
+                ext = meta['filename'].split('.')[-1]
+                filename = '{0}.{1}'.format(self.current_user['_id'], ext)
+                filepath = os.path.join(self.upload_path, filename)
+                with open(filepath, 'wb') as f:
+                    f.write(meta['body'])
 
         password = self.get_body_argument('password', '')
         if password:
