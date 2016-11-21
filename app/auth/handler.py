@@ -1,6 +1,7 @@
 # -*-coding:UTF-8-*-
 import time
 import json
+import re
 import uuid
 import tornado.web
 import tornado.gen
@@ -20,6 +21,7 @@ class RegisterHandler(BaseHandler):
     def prepare(self):
         super(RegisterHandler, self).prepare()
         self.error_map = {
+            'email_wrong': 'email格式错误',
             'passworddiff': '两次输入的密码不相同',
             'userexisted': '用户已经被注册',
             'passwordshort': '密码长度不能少于6个字符',
@@ -40,8 +42,8 @@ class RegisterHandler(BaseHandler):
         if not token:
             error = self.get_query_argument('error', '')
             error_msg = self.error_map.get(error, '')
-            self.render('auth/template/register.html', error=error_msg)
-
+            self.render('auth/template/register.html',
+                        error=error_msg, cache=self.cache['user_reg'] or {})
         else:
             #
             # 若 url 中存在 + %2B 则会获得空格 ??
@@ -71,33 +73,47 @@ class RegisterHandler(BaseHandler):
         captcha = self.get_body_argument('captcha', '')
         self.cache['user_reg'] = {
             'username': username,
-            'password': password,
-            'repassword': repassword
+            'email': email,
+            'password': password
         }
-
-        #  验证逻辑
+        # 验证逻辑
+        if not re.match(r'^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$', email):
+            self.redirect('/register?error=email_wrong')
+            return
         if not Captcha.verify(captcha, self):
-            self.redirect(' /register?error=captcha_wrong')
-        # 改成 bool
+            self.redirect('/register?error=captcha_wrong')
+            return
         if self.settings['reg_type'] == 'close':
             self.redirect('/register?error=closed')
+            return
         if self.settings['reg_type'] == 'invite':
             invitecode = self.get_body_argument('invitecode', '')
             record = yield self.db.invite.find_one({
-                'code': {'$eq': invitecode},
-                'used': {'$eq': False}
+                'code': {
+                    '$eq': invitecode
+                },
+                'used': {
+                    '$eq': False
+                }
             })
             if not record:
                 self.redirect('/register?error=invite_wrong')
+                return
             elif time.time() - record['time'] > self.settings['invite_expire_time']:
                 yield self.db.invite.remove({'code': invitecode})
                 self.redirect('/register?error=invite_expire')
+                return
 
         if len(password) < 6:
             self.redirect('/register?error=passwordshort')
+            return
+        if password != repassword:
+            self.redirect('/register?error=passworddiff')
+            return
         user = yield self.db.user.find_one({'$or': [{'username': username}, {'email': email}]})
         if user:
             self.redirect('/register?error=userexisted')
+            return
 
         hash_object = md5(password + self.settings['salt'])
         password = hash_object.hexdigest()
@@ -121,15 +137,12 @@ class RegisterHandler(BaseHandler):
             'loginip': self.request.remote_ip
         }
 
-        # 这里需要 model验证
-        #
-        #
         if self.settings['reg_type'] == 'invite':
             record['used'] = True
             record['user'] = username
-            yield self.db.invite.update(
-                {'code': invitecode},
-                record
+            yield self.db.invite.update({
+                'code': invitecode
+            }, record
             )
 
         self.cache['user_info'] = user
@@ -165,10 +178,10 @@ class LoginHandler(BaseHandler):
     def get(self):
         if self.get_current_user():
             self.redirect('/')
+            return
         error = self.get_argument('error', '')
         error_msg = self.error_map.get(error, '')
         next_to = self.get_query_argument('next', '')
-        print error_msg
         self.render('auth/template/login.html', error=error_msg, next=next_to)
 
     @tornado.web.asynchronous
@@ -180,8 +193,11 @@ class LoginHandler(BaseHandler):
         remember = self.get_body_argument('remember', False)
 
         if not Captcha.verify(captcha, self):
-            self.redirect('login?captcha_wrong')
-        user = yield self.db.user.find_one({'username': username})
+            self.redirect('/login?error=captcha_wrong')
+            return
+        user = yield self.db.user.find_one({
+            'username': username
+        })
         # 对密码进行验证 util.function
         hash_object = md5(password + self.settings['salt'])
         if user and user['password'] == hash_object.hexdigest():
@@ -192,16 +208,19 @@ class LoginHandler(BaseHandler):
             else:
                 self.set_secure_cookie(
                     'TORNADOSESSION', cookie, expires_days=1)
-            yield self.db.user.find_and_modify(
-                {'username': username},
-                {'$set': {
+            yield self.db.user.find_and_modify({
+                'username': username
+            }, {
+                '$set': {
                     'logintime': time.time(),
                     'loginip': self.request.remote_ip
-                }}
-            )
+                }
+            })
             self.redirect(self.get_query_argument('next', '/'))
+            return
         else:
             self.redirect('login?error=verify_wrong')
+            return
 
 
 class LogoutHandler(BaseHandler):
@@ -249,8 +268,8 @@ class ForgetPasswordHandler(BaseHandler):
                 'password': password
             })
             if user:
-                # 这里是否应该重新生成token?
-                self.render('auth/template/forget-password.html', step=2, token=token)
+                self.render('auth/template/forget-password.html',
+                            step=2, token=token)
             else:
                 self.send_error(status_code=500)
         else:

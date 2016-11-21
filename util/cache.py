@@ -1,7 +1,7 @@
 # -*-coding:UTF-8-*-
 
 
-class cache(dict):
+class Cache(dict):
 
     def __init__(self, request):
         dict.__init__(self)

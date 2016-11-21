@@ -24,14 +24,9 @@ class Captcha(object):
 
     @staticmethod
     def verify(captcha, request):
-        #
-        # 暂不开启,方便调试
-        #
-        return True
-
-        # chars = request.session.get('captcha', '')
-        # if chars:
-        #     request.session.delete('captcha')
-        #     if captcha == chars:
-        #         return True
-        #     return False
+        chars = request.session.get('captcha', '')
+        if chars:
+            request.session.delete('captcha')
+            if captcha == chars:
+                return True
+            return False

@@ -32,18 +32,26 @@ background-attachment:fixed;
 <div class="am-g am-g-fixed">
     <div class="am-u-lg-4 am-u-md-6 am-u-sm-centered">
         <h3>新用户注册</h3>
+        {% if error %}
+        <div class="am-alert am-alert-danger" data-am-alert>
+            <button type="button" class="am-close">&times;</button>
+            <p class="am-small">{{ error }}</p>
+        </div>
+        {% end %}
         <hr>
         <form method="POST" action="" class="am-form">
             {% module xsrf_form_html() %}
-            <input type="email" name="email" id="email" value="" placeholder="邮箱">
+            <input type="email" name="email" id="email" value="" placeholder="邮箱" value="{{cache.get('email','')}}">
             <br>
-            <input type="text" name="username" id="username" placeholder="用户名">
+            <input type="text" name="username" id="username" placeholder="用户名" value="{{cache.get('username','')}}">
             <br>
-            <input type="password" name="password" id="password" placeholder="密码">
+            <input type="password" name="password" id="password" placeholder="密码" value="{{cache.get('password','')}}">
             <br>
             <input type="password" name="repassword" id="repassword" placeholder="重复输入以确认">
             <br>
             <input type="text" name="captcha" placeholder="验证码">
+            <br>
+            <img src="/captcha.png">
             <br>
             <div class="am-cf">
                 <input type="submit" name="submit" value="注 册" class="am-btn am-btn-primary am-btn-sm am-fl am-btn-block">

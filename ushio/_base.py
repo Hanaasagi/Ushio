@@ -5,7 +5,7 @@ import tornado.web
 import tornado.gen
 # from util.email import Email
 from torndsession.sessionhandler import SessionBaseHandler
-from util.cache import cache
+from util.cache import Cache
 
 
 class BaseHandler(SessionBaseHandler):
@@ -14,7 +14,7 @@ class BaseHandler(SessionBaseHandler):
         self.db = self.settings['connection']
         self.upload_path = self.settings['upload_path']
         self.backend = self.settings.get('thread_pool')
-        self.cache = cache(self)
+        self.cache = Cache(self)
 
     def render(self, template_name, **kwargs):
         super(BaseHandler, self).render(template_name,

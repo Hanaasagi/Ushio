@@ -6,10 +6,10 @@
   "charge": !!int "1"
   "cookie_secret": !!python/unicode "456456783245"
   "email":
-    "key": "key-1c50c99497533bec101925fa8d8dc72b"
+    "key": "key-1c50b98497533cac101925ff7d8dc72b"
     "method": "none"
     "sender": "root@domain"
-    "url": "https://api.mailgun.net/v3/sandbox92952a16025a4acb97d9085e94629ccf.mailgun.org"
+    "url": "https://api.mailgun.net/v3/sandbox62952a32025a5acb97d9b85e74639ccf.mailgun.org"
   "imagepath": "./static/upimg"
   "init_money": !!int "50"
   "intranet": !!bool "false"
