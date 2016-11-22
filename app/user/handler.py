@@ -283,3 +283,56 @@ class DeleteHandler(BaseHandler):
                 self.session.delete('user_session')
                 self.redirect('/')
         self.custom_error('原始密码输入错误')
+
+
+class FollowHandler(BaseHandler):
+
+    def initialize(self):
+        super(FollowHandler, self).initialize()
+
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    @tornado.web.authenticated
+    def post(self, uid):
+        following_id = uid
+        user = yield self.db.user.find_one({
+            '_id': ObjectId(uid)
+        }, {
+            'following': 1,
+            'follower': 1
+        })
+        if following_id in user['following']:
+            rtn = yield self.db.user.find_and_modify({
+                '_id': ObjectId(self.current_user['_id'])
+            }, {
+                '$pull': {
+                    'following': following_id
+                }
+            })
+
+            rtn2 = yield self.db.user.find_and_modify({
+                '_id': ObjectId(following_id)
+            }, {
+                '$pull': {
+                    'follower': self.current_user['_id']
+                }
+            })
+
+        else:
+            rtn = yield self.db.user.find_and_modify({
+                '_id': ObjectId(self.current_user['_id'])
+            }, {
+                '$push': {
+                    'following': following_id
+                }
+            })
+            rtn2 = yield self.db.user.find_and_modify({
+                '_id': ObjectId(following_id)
+            }, {
+                '$push': {
+                    'follower': self.current_user['_id']
+                }
+            })
+        if rtn and rtn2:
+            self.write('{"success":true}')
+            self.finish()

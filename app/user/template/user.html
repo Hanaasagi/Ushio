@@ -27,19 +27,30 @@
                     <div>
                         所在地区: {{ userinfo['address'] or '地球' }}
                     </div>
+                    {% if current_user and str(userinfo['_id']) != current_user['_id'] %}
+                    <div class="am-fr">
+                        <a  name="follow" href="#">
+                        {% if current_user['_id'] in userinfo['follower'] %}
+                            取消关注
+                        {% else %}
+                            关注他/她
+                        {% end %}
+                        </a>
+                    </div>
+                    {% end %}
                 </td>
             </tr>
             <tr class="row">
                 <td class="am-text-center">
-                    <div><a class="counter" href="/msl12/followers">0</a></div>
-                    <div>帖子</div>
+                    <div><a class="counter" href="/msl12/followers">{{ len(userinfo['favorite']) }}</a></div>
+                    <div>收藏帖子</div>
                 </td>
                 <td class="am-text-center">
-                    <div><a class="counter" href="/user/{{ userinfo['username'] }}/followers">0</a></div>
+                    <div><a class="counter" href="/user/{{ userinfo['username'] }}/followers">{{len(userinfo['follower'])}}</a></div>
                     <div>关注者</div>
                 </td>
                 <td class="am-text-center">
-                    <div><a class="counter" href="/user/{{ userinfo['username'] }}/following">0</a></div>
+                    <div><a class="counter" href="/user/{{ userinfo['username'] }}/following">{{len(userinfo['following'])}}</a></div>
                     <div>正在关注</div>
                 </td>
             </tr>
@@ -74,4 +85,26 @@
         </table>
     </div>
 </div>
+{% end %}
+{% block js %}
+<script type="text/javascript">
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+    $(function(){
+        $("a[name='follow']").click(function(){
+            $.post("/user/follow/{{userinfo['_id']}}",{
+                "_xsrf":getCookie("_xsrf")},
+                function(response){
+                    rtn = eval("(" + response + ")");
+                    if(rtn['success'] != 0) {
+                        window.location.reload();
+                    } else {
+                        alert(rtn['msg']);
+                    }
+            });
+        });
+    });
+</script>
 {% end %}

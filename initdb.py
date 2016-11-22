@@ -36,6 +36,8 @@ def create_admin(db, setting):
         'openemail': 1,
         'openfavorite': 1,
         'openqq': 1,
+        'following': [],
+        'follower': [],
         'allowemail': 1,
         'logintime': None,
         'loginip': None

@@ -3,6 +3,7 @@ import time
 import json
 import re
 import uuid
+import shutil
 import tornado.web
 import tornado.gen
 from hashlib import md5
@@ -31,12 +32,14 @@ class RegisterHandler(BaseHandler):
             'captcha_wrong': '验证码错误',
         }
 
+    @tornado.gen.coroutine
     def get(self):
         '''
             显示注册页面 错误信息
         '''
         if self.get_current_user():
             self.redirect('/')
+            return
         token = self.get_query_argument('token', None)
 
         if not token:
@@ -52,10 +55,17 @@ class RegisterHandler(BaseHandler):
             msg = Cipher(self.settings['cookie_secret']).decrypt(token)
             if self.cache['token'] == msg:
                 user = self.cache['user_info']
-                result = self.db.user.insert(user)
-                if not result:
+                uid = yield self.db.user.insert(user)
+                if not uid:
                     self.send_error(status_code=500)
-                self.cache['user_reg'] = None
+
+                #
+                # 默认头像
+                #
+                def generate_avatar():
+                    shutil.copy('./static/img/avatar/default.png',
+                                './static/img/avatar/{}.png'.format(str(uid)))
+                yield self.backend.submit(generate_avatar)
                 self.redirect('/login?next=/user/update')
             else:
                 self.write('验证失败 请重新注册')
@@ -133,6 +143,8 @@ class RegisterHandler(BaseHandler):
             'openfavorite': 1,
             'openqq': 1,
             'allowemail': 1,
+            'following': [],
+            'follower': [],
             'logintime': None,
             'loginip': self.request.remote_ip
         }
@@ -152,13 +164,14 @@ class RegisterHandler(BaseHandler):
         url = '{}/register?token={}'.format(
             self.settings['site_url'], url_escape(token)
         )
-        Email(self.settings['email']).send(
-            to=user['email'],
-            origin='',
-            title=u'注册 - %s' % self.settings['site']['name'],
-            content=u'点击链接完成注册：<br /><a href=\"%s\">%s</a><br />如果不是您本人操作，请忽视这封邮件' % (
-                url, url)
-        )
+        # Email(self.settings['email']).send(
+        #     to=user['email'],
+        #     origin='',
+        #     title=u'注册 - %s' % self.settings['site']['name'],
+        #     content=u'点击链接完成注册：<br /><a href=\"%s\">%s</a><br />如果不是您本人操作，请忽视这封邮件' % (
+        #         url, url)
+        # )
+        self.write(url)
         self.write('我们已经发送了一封邮件到{0}，请及时确认'.format(user['email']))
         self.finish()
 
