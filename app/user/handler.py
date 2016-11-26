@@ -37,9 +37,11 @@ class ProfileHandler(BaseHandler):
         cursor = self.db.topic.find({
             'author_id': str(user['_id'])
         })
+        total = yield cursor.count()
         cursor.sort([('time', -1)]).limit(limit).skip((page - 1) * limit)
         topics = yield cursor.to_list(length=limit)
-        self.render('user/template/user.html', userinfo=user, topics=topics,
+        self.render('user/template/user.html', userinfo=user,
+                    topics=topics, limit=limit, page=page, total=total,
                     label_map=UserModel().get_label())
 
 

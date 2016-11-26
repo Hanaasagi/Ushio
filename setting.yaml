@@ -24,13 +24,11 @@
     "keyword": !!python/unicode "love && peace"
     "name": !!python/unicode "Ushio"
 "redis":
-  "driver_settings":
-    "db": !!int "0"
-    "host": "localhost"
-    "max_connections": !!int "1024"
-    "password": ""
-    "port": !!int "6379"
-  "force_persistence": !!bool "false"
+  "db": !!int "0"
+  "host": "localhost"
+  "max_connections": !!int "1024"
+  "password": ""
+  "port": !!int "6379"
 "session":
   "cache_driver": !!bool "true"
   "cookie_config":

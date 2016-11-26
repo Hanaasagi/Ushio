@@ -18,18 +18,26 @@
         {% if messages %}
         <div class="am-panel am-panel-default">
             <div class="am-fr">
-                <a href="" name="read"><small>标记为已读</small></a>&nbsp;&nbsp;<a href="" name="del"><small>删除</small></a>&nbsp;
+                <a href="" name="del"><small>删除选中消息</small></a>&nbsp;
             </div>
             <table class="am-table am-text-sm am-scrollable-horizontal">
                 {% for message in messages %}
-                <tr class="row {{['am-active','am-disabled'][message['read']]}}">
+                <tr class="row am-active">
+                    <td width="6%" class="am-hide-sm-down">
+                        <img class="am-img-thumbnail am-circle" src="{{ static_url("img/avatar/"+message['from_id']+".png")}}" width="40" height="40"/>
+                    </td>
                     <td>
                         <span>
-                        <a href="/user/{{ message['from_name'] }}">{{ message['from_name'] }}</a> &nbsp; 在帖子 <a name="message" value="{{ message['_id'] }}" href="/topics/{{ message['tid'] }}">{{ message['title'] }}</a> 中回复了你
+                            <a href="/user/{{ message['from_name'] }}">{{ message['from_name'] }}</a>
+                            <time>{% module timespan(float(message['time'])) %}<time> &nbsp; 在帖子 <a name="message" href="/topics/{{ message['tid'] }}">{{ message['title'] }}</a> 中回复了你
+                        </span>
+                        <br>
+                        <span>
+                            {{ message['content'] }}
                         </span>
                     </td>
                     <td>
-                        <input name="checkbox" type="checkbox" value="{{ message['_id'] }}">
+                        <input name="checkbox" type="checkbox" value="{{ message['time'] }}">
                     </td>
                 </tr>
                 {% end %}
@@ -65,42 +73,6 @@
                     }
             });
             return false;
-        });
-
-        $("a[name='read']").click(function(){ 
-            id_list = new Array(); 
-            $("input[name='checkbox']:checkbox:checked").each(function(){
-                id_list.push($(this).val());
-            });
-            $.post("/message",{"method":"read",
-                "id_list":id_list.join("|"),
-                "_xsrf":getCookie("_xsrf")},
-                function(response){
-                    rtn = eval("(" + response + ")");
-                    if(rtn['success'] != true) {
-                        alert(rtn['msg']);
-                    } else {
-                        window.location.reload();
-                    }
-            });
-            return false;
-        });
-
-        $("a[name='message']").click(function(){ 
-            id_list = new Array(); 
-            id_list.push($(this).attr('value'));
-            $.post("/message",{"method":"read",
-                "id_list":id_list.join("|"),
-                "_xsrf":getCookie("_xsrf")},
-                function(response){
-                    rtn = eval("(" + response + ")");
-                    if(rtn['success'] != true) {
-                        alert(rtn['msg']);
-                    } else {
-                        window.location.reload();
-                    }
-            });
-            return true;
         });
     }); 
 </script>

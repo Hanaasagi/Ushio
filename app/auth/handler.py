@@ -66,6 +66,9 @@ class RegisterHandler(BaseHandler):
                     shutil.copy('./static/img/avatar/default.png',
                                 './static/img/avatar/{}.png'.format(str(uid)))
                 yield self.backend.submit(generate_avatar)
+
+                # 用户上次查看信箱的时间
+                self.redis_conn.set('seen:' + user['username'], time.time())
                 self.redirect('/login?next=/user/update')
             else:
                 self.write('验证失败 请重新注册')

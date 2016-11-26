@@ -300,7 +300,7 @@ class AdminTagDelHandler(BaseHandler):
 
 
 #
-# 管理员是否应该修改用户的信息
+# 造物主是否存在
 #
 class AdminUserUpdateHandler(BaseHandler):
 

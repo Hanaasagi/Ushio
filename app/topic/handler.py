@@ -23,7 +23,8 @@ class HomeHandler(BaseHandler):
         '''
         zone = self.get_query_argument('zone', '')
         limit = 20
-        page = 1
+        page = self.get_query_argument('page', '')
+        page = int(page) if page else 1
         if zone:
             cursor = self.db.topic.find({
                 'zone': zone
@@ -40,12 +41,14 @@ class HomeHandler(BaseHandler):
             })
         cursor.sort([('top', -1), ('lastcomment', -1), ('time', -1)]
                     ).limit(limit).skip((page - 1) * limit)
+        total = yield cursor.count()
         topics = yield cursor.to_list(length=limit)
+        # TAG
         cursor = self.db.tag.find()
         cursor.sort([('nums', -1)])
         length = yield cursor.count()
         tags = yield cursor.to_list(length=length)
-        self.render('topic/template/topic.html',
+        self.render('topic/template/topic.html', page=page, limit=limit, total=total,
                     topics=topics, tags=tags, **self.settings['site'])
 
 
@@ -195,6 +198,31 @@ class TopicLikeHandler(BaseHandler):
     @tornado.web.asynchronous
     @tornado.gen.coroutine
     @tornado.web.authenticated
+    def get(self):
+        uid = self.current_user['_id']
+        limit = 20
+        page = int(self.get_query_argument('page', '1'))
+        fav_list = yield self.db.user.find_one({
+            '_id': ObjectId(uid)
+        }, {
+            'favorite': 1
+        })
+
+        cursor = self.db.topic.find({
+            '_id': {
+                '$in': fav_list['favorite']
+            }
+        })
+        total = yield cursor.count()
+        cursor.limit(
+            limit).skip((page - 1) * limit)
+        topics = yield cursor.to_list(length=limit)
+        self.render('topic/template/topic-favorite.html',
+                    topics=topics, page=page, limit=limit, total=total)
+
+    @tornado.web.asynchronous
+    @tornado.gen.coroutine
+    @tornado.web.authenticated
     def post(self):
         tid = self.get_body_argument('tid', '')
         uid = self.current_user.get('_id', '')
@@ -226,29 +254,6 @@ class TopicLikeHandler(BaseHandler):
                 self.finish()
         else:
             self.custom_error()
-
-    @tornado.web.asynchronous
-    @tornado.gen.coroutine
-    def get(self):
-        uid = self.current_user.get('_id', '')
-        limit = 20
-        page = int(self.get_query_argument('p', '1'))
-        fav_list = yield self.db.user.find_one({
-            '_id': ObjectId(uid)
-        }, {
-            'favorite': 1
-        })
-
-        cursor = self.db.topic.find({
-            '_id': {
-                '$in': fav_list['favorite']
-            }
-        })
-        total = yield cursor.count()
-        cursor.limit(
-            limit).skip((page - 1) * limit)
-        topics = yield cursor.to_list(length=limit)
-        self.render('topic/template/topic-favorite.html', topics=topics)
 
 
 class TopicUpdateHandler(BaseHandler):

@@ -15,6 +15,7 @@ class BaseHandler(SessionBaseHandler):
         self.upload_path = self.settings['upload_path']
         self.backend = self.settings.get('thread_pool')
         self.cache = Cache(self)
+        self.redis_conn = self.settings['redis_conn']
 
     def render(self, template_name, **kwargs):
         super(BaseHandler, self).render(template_name,

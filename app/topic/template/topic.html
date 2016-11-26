@@ -19,12 +19,6 @@
 <!-- content -->
 <div class="am-container" style="max-width: 1200px;">
     <div class="am-u-md-9">
-<!--         <div class="am-text-center">
-            <div class="am-alert am-alert-success" id="message-alert" data-am-alert>
-                <button type="button" class="am-close">&times;</button>
-                <em><small>您有x条未读消息</small></em>
-            </div>
-        </div> -->
         <div class="am-panel am-panel-default">
             <div class="am-panel-bd am-text-center">
                 <small>{{ site_base['description'] }}</small>
@@ -62,6 +56,9 @@
                 <ul class="am-pagination am-fr admin-content-pagination"></ul>
                 <div class="am-cf"></div>
             </div>
+        </div>
+        <div class="am-fr">
+            {% module pagenav(url='/', limit=limit, now=page, total=total) %}
         </div>
     </div>
     <div class="am-u-md-3">

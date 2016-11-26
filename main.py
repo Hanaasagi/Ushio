@@ -2,6 +2,7 @@
 import os
 import sys
 import yaml
+import redis
 from concurrent import futures
 from ushio.urlmap import urlpattern
 from uimodule.timespan import TimeSpan
@@ -61,11 +62,26 @@ def run():
     if settings['debug']:
         print 'debug mode'
 
+    '''
+        connect mongodb
+    '''
     try:
         client = MotorClient(settings['database']['address'])
         settings['connection'] = client[settings['database']['db']]
     except:
         print 'can not connect MongoDB'
+        sys.exit(0)
+
+    '''
+        connect redis
+    '''
+    try:
+        client = redis.Redis(host=settings['redis']['host'],
+                             port=settings['redis']['port'],
+                             db=settings['redis']['db'])
+        settings['redis_conn'] = client
+    except:
+        print 'can not connect redis'
         sys.exit(0)
 
     application = Application(

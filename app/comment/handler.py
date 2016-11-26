@@ -4,12 +4,14 @@
 # Ajax handler
 #
 
+import re
+import time
+import json
 import tornado.web
 import tornado.gen
-import time
-import re
 from bson import ObjectId
 from ushio._base import BaseHandler
+from util.message import Message
 
 
 class CommentNewHandler(BaseHandler):
@@ -45,29 +47,19 @@ class CommentNewHandler(BaseHandler):
             rtn2 = True
             r = re.compile('(@\w+ )')
             tolist = map(lambda s: s.lstrip('@').rstrip(), r.findall(content))
-            if tolist:
-                for name in tolist:
-                    message = {
-                        'from_id': self.current_user['_id'],
-                        'from_name': self.current_user['username'],
-                        'to_name': name,
-                        'title': title,
-                        'tid': tid,
-                        'read': 0,
-                    }
-                    rtn2 = self.db.message.insert(message)
-                    if not rtn2:
-                        break
-            else:
+            if len(tolist) == 0:
+                tolist.append(self.get_body_argument('author'))
+            for name in tolist:
                 message = {
                     'from_id': self.current_user['_id'],
                     'from_name': self.current_user['username'],
-                    'to_name': self.get_body_argument('author'),
                     'title': title,
+                    'content': content,
                     'tid': tid,
-                    'read': 0,
                 }
-                rtn2 = self.db.message.insert(message)
+                rtn2 = self.redis_conn.zadd(
+                    'mailbox:' + name, json.dumps(message), time.time())
+                Message.notify(name)
             if rtn and rtn2:
                 self.write('{"success":true}')
                 self.finish()

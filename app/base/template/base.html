@@ -52,13 +52,13 @@
         </div>
         {% else %}
         <div class="am-topbar-right">
+            <a href="/message" class="am-btn am-topbar-btn am-btn-sm">消息&nbsp;<span class="am-badge am-radius am-badge-warning" id="new_message"></span></a>
             <div class="am-dropdown" data-am-dropdown="{boundary: '.am-topbar'}">
                 <button class="am-btn am-topbar-btn am-btn-sm am-dropdown-toggle" data-am-dropdown-toggle>{{ current_user['username'] }} <span class="am-icon-caret-down"></span></button>
                 <ul class="am-dropdown-content">
                     <li><a href="/user/{{ current_user['username'] }}">我的主页</a></li>
                     <li><a href="/topics/new">发帖子</a></li>
                     <li><a href="/favorite">我喜欢的</a></li>
-                    <li><a href="/message">提醒<span class="am-badge am-radius am-badge-warning">5</span></a></li>
                     <li><a href="/user/update">设置</a></li>
                     <li><a href="/logout">登出</a></li>
                 </ul>
@@ -90,6 +90,19 @@
 </footer>
 <script src="{{ static_url("assets/js/jquery.min.js") }}"></script>
 <script src="{{ static_url("assets/js/amazeui.min.js") }}"></script>
+{% if current_user %}
+<script type="text/javascript">
+    var ws = new WebSocket("ws://"+ window.location.host + "/message/status");
+    ws.onopen = function() {
+        ws.send("");
+    };
+    ws.onmessage = function (evt) {
+        if(evt.data != 0) {
+            $('#new_message').html(evt.data);
+        }
+    };
+{% end %}
+</script>
 {% block js%}{% end %}
 </body>
 </html>

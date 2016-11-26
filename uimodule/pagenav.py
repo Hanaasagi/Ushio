@@ -15,6 +15,8 @@ class PageNav(tornado.web.UIModule):
         else:
             page = int((total / limit) + 1)
 
+        if page <= 1:
+            return ''
         i = now - 5
         if i < 0:
             span = abs(i) + span + 1
@@ -34,7 +36,5 @@ class PageNav(tornado.web.UIModule):
         if now + span < page:
             html = u'{0}<li class="am-disabled"><a href="#">...</a></li><li><a class="am-link-muted" href="{1}?page={2}">尾页</a></li>'.format(
                 html, url, page)
-        # if page <= 1:
-        #     html = ''
         html = pre + html + end
         return html

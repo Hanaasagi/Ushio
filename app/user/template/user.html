@@ -83,6 +83,7 @@
             </tr>
             {% end %}
         </table>
+        {% module pagenav(url='/user/' + userinfo['username'], limit=limit, now=page, total=total) %}
     </div>
 </div>
 {% end %}
