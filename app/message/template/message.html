@@ -28,8 +28,17 @@
                     </td>
                     <td>
                         <span>
+                            {% if message['type'] == 'reply' %}
                             <a href="/user/{{ message['from_name'] }}">{{ message['from_name'] }}</a>
-                            <time>{% module timespan(float(message['time'])) %}<time> &nbsp; 在帖子 <a name="message" href="/topics/{{ message['tid'] }}">{{ message['title'] }}</a> 中回复了你
+                            <time>{% module timespan(float(message['time'])) %}</time> &nbsp; 在帖子 <a name="message" href="/topics/{{ message['tid'] }}">{{ message['title'] }}</a> 中回复了你
+                            {% elif message['type'] == 'comment' %}
+                            <a href="/user/{{ message['from_name'] }}">{{ message['from_name'] }}</a>
+                            <time>{% module timespan(float(message['time'])) %}</time> &nbsp; 在帖子 <a name="message" href="/topics/{{ message['tid'] }}">{{ message['title'] }}</a> 中发表了新的评论
+                            {% elif message['type'] == 'news' %}
+                            <a href="/user/{{ message['from_name'] }}">{{ message['from_name'] }}</a>
+                            <time>{% module timespan(float(message['time'])) %}</time> &nbsp;发表了新的帖子
+                            <a name="message" href="/topics/{{ message['tid'] }}">{{ message['title'] }}</a> 
+                            {% end %}
                         </span>
                         <br>
                         <span>

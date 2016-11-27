@@ -1,8 +1,10 @@
 # -*-coding:UTF-8-*-
 
+
 class Message(object):
 
     _callbacks = {}
+
     @staticmethod
     def register(callback):
         Message._callbacks.update(callback)

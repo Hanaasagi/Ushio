@@ -23,7 +23,8 @@ class MessageWebSocket(tornado.websocket.WebSocketHandler, BaseHandler):
     def check_message(self):
         t = self.redis_conn.get('seen:' + self.current_user['username'])
         messages = self.redis_conn.zrangebyscore(
-            'mailbox:' + self.current_user['username'], int(float(t)), int(time.time()))
+            'mailbox:' + self.current_user['username'], float(t), time.time())
+        print len(messages),self.current_user['username']
         self.write_message(str(len(messages)))
 
 
@@ -66,12 +67,12 @@ class MessageHandler(BaseHandler):
         try:
             pipe.multi()
             for id_ in id_list:
-                print id_
-                self.redis_conn.zremrangebyscore('mailbox:' + self.current_user['username'], id_,id_)
+                # print id_
+                # self.redis_conn.zremrangebyscore('mailbox:' + self.current_user['username'], id_,id_)
                 pipe.zremrangebyscore(
                     'mailbox:' + self.current_user['username'], id_, id_)
             pipe.execute()
-        except Exception,e:
+        except Exception, e:
             print e
         else:
             self.write('{"success":true}')

@@ -49,6 +49,9 @@ class CommentNewHandler(BaseHandler):
             tolist = map(lambda s: s.lstrip('@').rstrip(), r.findall(content))
             if len(tolist) == 0:
                 tolist.append(self.get_body_argument('author'))
+                type_ = 'reply'
+            else:
+                type_ = 'comment'
             for name in tolist:
                 message = {
                     'from_id': self.current_user['_id'],
@@ -56,6 +59,7 @@ class CommentNewHandler(BaseHandler):
                     'title': title,
                     'content': content,
                     'tid': tid,
+                    'type': type_
                 }
                 rtn2 = self.redis_conn.zadd(
                     'mailbox:' + name, json.dumps(message), time.time())

@@ -7,6 +7,7 @@ import cgi
 import markdown
 from bson import ObjectId
 from app.topic.model import TopicModel
+from util.message import Message
 from ushio._base import BaseHandler
 
 
@@ -48,8 +49,8 @@ class HomeHandler(BaseHandler):
         cursor.sort([('nums', -1)])
         length = yield cursor.count()
         tags = yield cursor.to_list(length=length)
-        self.render('topic/template/topic.html', page=page, limit=limit, total=total,
-                    topics=topics, tags=tags, **self.settings['site'])
+        self.render('topic/template/topic.html', page=page, limit=limit,
+                    total=total, topics=topics, tags=tags, **self.settings['site'])
 
 
 class TopicNewHandler(BaseHandler):
@@ -125,6 +126,31 @@ class TopicNewHandler(BaseHandler):
         # self.redirect('/topics/{}'.format(tid))
         # Ajax
         rtn['tid'] = str(tid)
+        message = {
+            'from_id': str(self.current_user['_id']),
+            'from_name': self.current_user['username'],
+            'title': title,
+            'content': '',
+            'tid': str(tid),
+            'type': 'news'
+        }
+
+        user = yield self.db.user.find_one({
+            '_id': ObjectId(self.current_user['_id'])
+        }, {
+            'follower': 1
+        })
+        #
+        # 使用 pipe 不能直接唤醒
+        #
+        pipe = self.redis_conn.pipeline()
+        pipe.multi()
+        for follower in user['follower']:
+            pipe.zadd('mailbox:' + follower['username'],
+                      json.dumps(message), time.time())
+        pipe.execute()
+        for follower in user['follower']:
+            Message.notify(follower['username'])
         self.write(json.dumps(rtn))
         self.finish()
 

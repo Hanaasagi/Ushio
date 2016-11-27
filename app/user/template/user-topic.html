@@ -1,0 +1,59 @@
+{% extends "../../base/template/base.html" %}
+{% block title %}{{ userinfo['username'] }} 的主页{% end %}
+{% block css %}
+<style type="text/css">
+    a.counter {
+        color: #356dd0;
+        font-size: 32px;
+    }
+</style>
+{% end %}
+{% block body %}
+<div class="am-container" style="max-width: 1200px;">
+    <div class="am-u-sm-12 am-u-md-4">
+    {% include "user-show.html" %}
+    </div>
+    <div class="am-u-sm-12 am-u-md-8">
+        <p class="">最近发布的帖子</p>
+        <table class="am-table am-text-sm am-scrollable-horizontal">
+            {% for topic in topics %}
+            <tr class="row">
+                <td>
+                    <span>
+                        <a class="am-badge am-round" href="/tag/{{ topic['tag'] }}">{{ topic['tag'] }}</a>&nbsp;
+                        <a href="/topics/{{ topic['_id'] }}" >{{ topic['title'] }}</a>&nbsp;&nbsp;
+                        <time><em>{{ datetime.datetime.fromtimestamp(topic['time']).strftime('%Y-%m-%d') }}</time></em>
+                    </span>
+                </td>
+                <td  style="vertical-align:middle;">
+                   <span class="am-badge am-round">{{len(topic['comment'])}}</span>
+                </td>
+            </tr>
+            {% end %}
+        </table>
+        {% module pagenav(url='/user/' + userinfo['username'], limit=limit, now=page, total=total) %}
+    </div>
+</div>
+{% end %}
+{% block js %}
+<script type="text/javascript">
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+    $(function(){
+        $("a[name='follow']").click(function(){
+            $.post("/user/follow/{{userinfo['username']}}",{
+                "_xsrf":getCookie("_xsrf")},
+                function(response){
+                    rtn = eval("(" + response + ")");
+                    if(rtn['success'] != 0) {
+                        window.location.reload();
+                    } else {
+                        alert(rtn['msg']);
+                    }
+            });
+        });
+    });
+</script>
+{% end %}

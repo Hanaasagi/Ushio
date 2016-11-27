@@ -1,0 +1,49 @@
+<table class="am-table am-text-sm am-scrollable-horizontal">
+    <tr class="row">
+        <td>
+            <img class="am-img-thumbnail am-circle" src="{{ static_url("img/avatar/"+str(userinfo['_id'])+".png")}}" width="90" height="90"/>
+        </td>
+        <td colspan="2">
+            <div>
+                <strong>  {{ userinfo['username'] }}</strong>
+            </div>
+            <div>
+                注册于
+                {{ datetime.datetime.fromtimestamp(int(userinfo['register_time'])).strftime('%Y-%m-%d') }}
+            </div>
+            <div>
+                所在地区: {{ userinfo['address'] or '地球' }}
+            </div>
+            {% if current_user and str(userinfo['_id']) != current_user['_id'] %}
+            <div class="am-fr">
+                <a  name="follow" href="#">
+                {% if {'_id':current_user['_id'],'username':current_user['username']} in userinfo['follower'] %}
+                    取消关注
+                {% else %}
+                    关注他/她
+                {% end %}
+                </a>
+            </div>
+            {% end %}
+        </td>
+    </tr>
+    <tr class="row">
+        <td class="am-text-center">
+            <div><a class="counter" href="/user/{{ userinfo['username'] }}/follower">{{len(userinfo['follower'])}}</a></div>
+            <div>关注者</div>
+        </td>
+        <td class="am-text-center">
+            <div><a class="counter" href="/user/{{ userinfo['username'] }}/following">{{len(userinfo['following'])}}</a></div>
+            <div>正在关注</div>
+        </td>
+    </tr>
+</table>
+<ul class="am-list">
+    {% if userinfo['openemail'] %}
+    <li><p>Email: <a href="mailto:{% raw userinfo['email'] %}">{{ userinfo['email'] }}</a></p></li>
+    {% end %}
+    {% if userinfo['openqq'] %}
+    <li><p>QQ: {{ userinfo['qq'] or '未知' }}</p></li>
+    {% end %}
+    <li><p>个人主页: {{ userinfo['website'] or '未知'}}</p></li>
+</ul>
