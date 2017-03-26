@@ -2,16 +2,16 @@
 
 Ushio 是一个基于 tornado 框架的社区  
 
-###ScreenShots  
+### ScreenShots  
 
 ![](https://raw.githubusercontent.com/Hanaasagi/Ushio/master/screenshots/index.png)
 
-###Requirements  
+### Requirements  
 
 	MongoDB >= 3.2
 	Redis >= 2.8
 
-###Usage
+### Usage
 
 	git clone git@github.com:Hanaasagi/Ushio.git
 	cd Ushio
@@ -26,6 +26,13 @@ Ushio 是一个基于 tornado 框架的社区
 
 	python main.py
 
-###License  
+### TODO
+
+- [ ] 单元测试
+- [ ] 后台
+- [ ] 用户登录统计
+- [ ] 运行日志
+
+### License  
 
 [MIT License](https://mit-license.org/)
